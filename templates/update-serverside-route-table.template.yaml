@@ -23,7 +23,7 @@ Resources:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Path: /
       Policies:
         - PolicyName: !Sub delete-route-primary-${AWS::StackName}
@@ -35,7 +35,7 @@ Resources:
                   - ec2:DeleteRoute
                   - ec2:CreateRoute
                 Resource:
-                  - !Sub "arn:aws:ec2:*:*:route-table/${PrimaryPrivateServerSubnetRouteTableID}"
+                  - !Sub "arn:${AWS::Partition}:ec2:*:*:route-table/${PrimaryPrivateServerSubnetRouteTableID}"
         - PolicyName: !Sub delete-route-secondary-${AWS::StackName}
           PolicyDocument:
             Version: 2012-10-17
@@ -45,7 +45,7 @@ Resources:
                   - ec2:DeleteRoute
                   - ec2:CreateRoute
                 Resource:
-                  - !Sub "arn:aws:ec2:*:*:route-table/${SecondaryPrivateServerSubnetRouteTableID}"
+                  - !Sub "arn:${AWS::Partition}:ec2:*:*:route-table/${SecondaryPrivateServerSubnetRouteTableID}"
         - PolicyName: lambdaupdate
           PolicyDocument:
             Version: 2012-10-17
