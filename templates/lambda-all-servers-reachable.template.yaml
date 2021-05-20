@@ -81,7 +81,7 @@ Resources:
                   - "logs:PutLogEvents"
                   - "logs:CreateExportTask"
                   - "logs:DescribeExportTask"
-                Resource: "arn:aws:logs:*:*:*"
+                Resource: !Sub "arn:${AWS::Partition}:logs:*:*:*"
         - PolicyName: lambdaallowreadec2
           PolicyDocument:
             Version: 2012-10-17
