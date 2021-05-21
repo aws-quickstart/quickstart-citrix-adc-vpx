@@ -1,6 +1,3 @@
-This Quick Start supports the following Regions:
-
-* us-east-1, US East (N. Virginia) (EXAMPLE)
-* us-east-2, US East (Ohio) (EXAMPLE)
-
-//Full list: https://docs.aws.amazon.com/general/latest/gr/rande.html
+Citrix ADC VPX isn’t currently supported in all AWS Regions.
+For a current list of supported Regions,
+see the https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md[Citrix Products on AWS Marketplace^] page on GitHub.

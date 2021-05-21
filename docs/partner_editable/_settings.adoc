@@ -6,7 +6,7 @@
 :doc-year: 2019
 :partner-contributors: {partner-company-name}
 :quickstart-contributors: AWS Quick Start team
-:deployment_time: 15 minutes / 60 minutes / 1.5 hours
+:deployment_time: 15 minutes
 :default_deployment_region: us-east-2
 :parameters_as_appendix:
 // Uncomment the following two attributes if you are using an AWS Marketplace listing.
@@ -14,3 +14,5 @@
 // Additional content will be generated automatically based on these attributes.
 :marketplace_subscription: Yes
 :marketplace_listing_url: https://aws.amazon.com/marketplace/pp/B00AA01BOE 
+:parameters_as_appendix:
+:template_deterministic_ec2_instances:

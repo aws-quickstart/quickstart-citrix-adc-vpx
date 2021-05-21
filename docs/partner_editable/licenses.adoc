@@ -1,15 +1,14 @@
 // Include details about any licenses and how to sign up. Provide links as appropriate. If no licenses are required, clarify that. The following paragraphs provide examples of details you can provide. Remove italics, and rephrase as appropriate.
 
-You can choose an AMI based on the licensing model, throughput, and bundling options.
+You can choose an Amazon Machine Image (AMI) based on the licensing model, throughput, and bundling options.
 
 * License model: Pay as You Go (PAYG, for the production licenses) or Bring Your Own License (BYOL, for the Customer Licensed AMI)
 * Throughput: 10 Mbps, 200 Mbps, 1000 Mbps, 3 Gbps, or 5 Gbps
-* Bundle: https://www.citrix.com/en-in/lp/try/citrix-networking-vpx-express.html[Express], or https://www.citrix.com/en-in/products/citrix-adc/platforms.html[Standard, Advanced, or Premium]
+* Bundle: https://www.citrix.com/en-in/lp/try/citrix-networking-vpx-express.html[Express^], or https://www.citrix.com/en-in/products/citrix-adc/platforms.html[Standard, Advanced, or Premium^]
 
-// Or, if the deployment uses an AMI, update this paragraph. If it doesn’t, remove the paragraph.
-_<AMI information>The Quick Start requires a subscription to the Amazon Machine Image (AMI) for {partner-product-short-name}, which is available from https://aws.amazon.com/marketplace/[AWS Marketplace^]. Additional pricing, terms, and conditions may apply. For instructions, see link:#step-2.-subscribe-to-the-software-ami[step 2] in the deployment section._
-If you don’t want to purchase a license file at this time, the Quick Start requires a subscription to the https://aws.amazon.com/marketplace/pp/B00AA01BOE[Citrix ADC VPX – Customer Licensed AMI], which allows 21 days of free usage and is available from https://aws.amazon.com/marketplace/[AWS Marketplace]. Additional pricing, terms, and conditions may apply.
+If you don’t want to purchase a license file at this time, the Quick Start requires a subscription to the https://aws.amazon.com/marketplace/pp/B00AA01BOE[Citrix ADC VPX – Customer Licensed AMI^], which allows 21 days of free usage and is available from https://aws.amazon.com/marketplace/[AWS Marketplace^]. Additional pricing, terms, and conditions may apply.
 
+//TODO Fix this link
 For instructions, see link:#step-2.-subscribe-to-the-citrix-adc-vpx-ami[step 2] in the deployment section.
 
-To upgrade to a production license, see the https://www.citrix.com/buy/licensing/management.html[Licensing] section on the Citrix website.
+To upgrade to a production license, see the https://www.citrix.com/buy/licensing/management.html[Licensing^] section on the Citrix website.

@@ -9,92 +9,73 @@ The Elastic IP address of the virtual IP address of the primary instance migrate
 
 In the failover process, Citrix ADC VPX does the following:
 
-1.  Checks the virtual servers that have IPSets attached to them.
-
-1.  Finds the IP address that has an associated public IP address from the two IP addresses that the vserver is listening on. One that is directly attached to the vserver, and one that is attached through the IP set.
-2.  Re-associates the public Elastic IP address to the private IP address that belongs to the new primary virtual IP address.
+. Checks the virtual servers that have IPSets attached to them.
+. Finds the IP address that has an associated public IP address from the two IP addresses that the vserver is listening on. One that is directly attached to the vserver, and one that is attached through the IP set.
+. Re-associates the public Elastic IP address to the private IP address that belongs to the new primary virtual IP address.
 
 To test the deployment, connect to the primary instance and trigger Force Failover. Then check whether the secondary instance takes over.
 
-[[connect-to-citrix-ha-pair-using-bastion-host]]
 === Connect to Citrix HA pair using bastion host
 
 As you cannot access the Citrix ADC VPX instance from outside the VPC, you must use a Linux bastion host to connect to it.
 
-1.  In the https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console], choose the master stack, and on the *Outputs* tab, find the value of *LinuxBastionHostEIP1*.
-
-1.  *PrivateManagementPrivateNSIP* and *PrimaryADCInstanceID* key’s value to be used in the later steps to SSH into the ADC.
-
-image:media/media/image4.png[image,width=648,height=367]
-
-Figure 6: Citrix ADC VPX HA pair deployment resources
-
-1.  Choose *Services*.
-2.  On the *Compute* tab, select *EC2*.
+. In the https://console.aws.amazon.com/cloudformation/[AWS CloudFormation console^], choose the parent stack, and on the *Outputs* tab, find the value of *LinuxBastionHostEIP1*.
+. *PrivateManagementPrivateNSIP* and *PrimaryADCInstanceID* key’s value to be used in the later steps to SSH into the ADC.
 +
-Under *Resources*, choose *Running Instances*.
+[#output2]
+.Citrix ADC VPX HA pair deployment resources
+image::../images/citrix-adc-vpx-ha-pair.png[Citrix ADC VPX HA pair,width=648,height=467]
 +
-On the *Description* tab of the primary ADC VPX instance, note the *IPv4 public IP* address. You will need that IP address to construct the SSH command.
-
-image:media/media/image5.png[image,width=648,height=242]
-
-Figure 7: Amazon EC2 console with primary instance description
-
-1.  To store the key in your keychain, run the command ssh-add -K <your-key-pair>.pem
+. Choose *Services*.
+. On the *Compute* tab, select *EC2*.
+. Under *Resources*, choose *Running Instances*.
+. On the *Description* tab of the primary ADC VPX instance, note the *IPv4 public IP* address. You will need that IP address to construct the SSH command.
 +
-On Linux, you might need to omit the -K flag.
-2.  Log in to the bastion host using the following command, using the value for *LinuxBastionHostEIP1* that you noted in step 1.
-
+[#output3]
+.Amazon EC2 console with primary instance description
+image::../images/citrix-adc-primary-instance.png[Primary instance,width=648,height=467]
++
+. To store the key in your keychain, run the command `ssh-add -K <your-key-pair>.pem`
+  On Linux, you might need to omit the -K flag.
+. Log in to the bastion host using the following command, using the value for *LinuxBastionHostEIP1* that you noted in step 1.
++
+```
 ssh -A ubuntu@<LinuxBastionHostEIP1>
-
-1.  From the bastion host, you can connect to the primary ADC VPX instance by using SSH.
-
-ssh nsroot@<Primary Management Private NSIP>
-
-Password: <Primary ADC Instance ID>
-
-image:media/media/image6.png[image,width=648,height=175]
-
-Figure 9: Connecting to the primary Citrix ADC VPX instance
-
-Now you are connected to the primary Citrix ADC VPX instance. To see the available commands, you can run the help command. To view the current HA configuration, you can run the show HA node command.
-
-1.  To test failover, run the force ha failover command.
+```
 +
-When prompted to proceed for failover, press Y and then press Enter to initiate the failover condition.
-
-image:media/media/image7.png[image,width=648,height=86]
-
-Figure 10: Initiating force failover test
-
-Upon failover, the Master State of the primary instance changes to secondary. The status of the instances can be observed by running the show HA node command:
-
-image:media/media/image8.png[image,width=461,height=528]
-
-Figure 11: Master state changes to secondary
-
-In *the Amazon EC2 console*, it can be observed that after failover, the Elastic IP address assigned to the primary ADC VPX instance gets allocated to the secondary instance.
-
-image:media/media/image9.png[image,width=648,height=235]
-
-*Figure 12: Secondary node description*
-
-== Post-deployment steps
-// If post-deployment steps are required, add them here. If not, remove the heading
+. From the bastion host, you can connect to the primary ADC VPX instance by using SSH.
++
+```
+ssh nsroot@<Primary Management Private NSIP>
+Password: <Primary ADC Instance ID>
+```
++
+[#output4]
+.Connecting to the primary Citrix ADC VPX instance
+image::../images/connect-primary.png[Connect primary instance,width=648,height=467]
++
+Now you are connected to the primary Citrix ADC VPX instance. To see the available commands, you can run the help command. To view the current HA configuration, you can run the show HA node command.
+. To test failover, run the `force ha failover` command. When prompted to proceed for failover, press `Y` and then press Enter to initiate the failover condition.
++
+[#output5]
+.Initiating force failover test
+image::../images/force-failover.png[Force failover instance,width=648,height=467]
++
+. Upon failover, the Master State of the primary instance changes to secondary. The status of the instances can be observed by running the `show HA node` command:
++
+[#output6]
+.Primary state changes to secondary
+image::../images/verify-state-change.png[Primary state change,width=648,height=467]
++
+. In *the Amazon EC2 console*, it can be observed that after failover, the Elastic IP address assigned to the primary ADC VPX instance gets allocated to the secondary instance.
++
+[#output7]
+.Secondary node description
+image::../images/verify-state-change-ec2.png[Primary instance state change,width=648,height=467]
 
 == Best practices for using {partner-product-short-name} on AWS
 // Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
-For deploying a Citrix ADC VPX instance on AWS, certain limitations and usage information must be adhered to. For details, see the https://docs.citrix.com/en-us/citrix-adc/12-1/deploying-vpx/deploy-aws/vpx-aws-limitations-usage-guidelines.html[Usage Guidelines] on the Citrix website.
+For deploying a Citrix ADC VPX instance on AWS, certain limitations and usage information must be adhered to. For details, see the https://docs.citrix.com/en-us/citrix-adc/12-1/deploying-vpx/deploy-aws/vpx-aws-limitations-usage-guidelines.html[Usage Guidelines^] on the Citrix website.
 
-For information about configuration details that apply to ADC VPX HA Pair, see Ahttps://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/high-availability-different-zones.html#how-high-availability-across-aws-availability-zones-works[DC HA Deployment across Availability Zones User’s Guide] on Citrix website.
+For information about configuration details that apply to ADC VPX HA Pair, see Ahttps://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/high-availability-different-zones.html#how-high-availability-across-aws-availability-zones-works[DC HA Deployment across Availability Zones User’s Guide^] on Citrix website.
 _Add any best practices for using the software._
-
-== Security
-// Provide post-deployment best practices for using the technology on AWS, including considerations such as migrating data, backups, ensuring high performance, high availability, etc. Link to software documentation for detailed information.
-
-_Add any security-related information._
-
-== Other useful information
-//Provide any other information of interest to users, especially focusing on areas where AWS or cloud usage differs from on-premises usage.
-
-_Add any other details that will help the customer use the software on AWS._
