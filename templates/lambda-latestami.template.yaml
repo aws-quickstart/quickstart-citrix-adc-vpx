@@ -1,0 +1,125 @@
+
+AWSTemplateFormatVersion: 2010-09-09
+
+Description: "This templates finds the latest Citrix ADC AMI in AWS marketplace"
+
+Parameters:
+  ADCProductName:
+    Type: String
+    Description: ''
+    Default: Citrix ADC VPX - Customer Licensed
+    AllowedValues:
+      - Citrix ADC VPX - Customer Licensed
+      - Citrix ADC VPX Express - 20 Mbps
+      - Citrix ADC VPX Standard Edition - 10 Mbps
+      - Citrix ADC VPX Standard Edition - 200 Mbps
+      - Citrix ADC VPX Standard Edition - 1000 Mbps
+      - Citrix ADC VPX Standard Edition - 3Gbps
+      - Citrix ADC VPX Standard Edition - 5Gbps
+      - Citrix ADC VPX Premium Edition - 10 Mbps
+      - Citrix ADC VPX Premium Edition - 200 Mbps
+      - Citrix ADC VPX Premium Edition - 1000 Mbps
+      - Citrix ADC VPX Premium Edition - 3Gbps
+      - Citrix ADC VPX Premium Edition - 5Gbps
+      - Citrix ADC VPX Advanced Edition - 10 Mbps
+      - Citrix ADC VPX Advanced Edition - 200 Mbps
+      - Citrix ADC VPX Advanced Edition - 1000 Mbps
+      - Citrix ADC VPX Advanced Edition - 3Gbps
+      - Citrix ADC VPX Advanced Edition - 5Gbps
+  ADCProductVersion:
+    Type: String
+    Description: ''
+    Default: '13.0'
+    AllowedValues:
+      - '13.0'
+  QSS3BucketName:
+    AllowedPattern: "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    ConstraintDescription: >-
+      Quick Start bucket name can include numbers, lowercase letters, uppercase
+      letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Description: >-
+      S3 bucket name for the Quick Start assets. This bucket name can include
+      numbers, lowercase letters, uppercase letters, and hyphens (-), but should
+      not start or end with a hyphen. You can specify your own bucket if you
+      copy all of the assets and submodules into it, if you want to override the
+      Quick Start behavior for your specific implementation.
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: "^[0-9a-zA-Z-/]*/$"
+    ConstraintDescription: >-
+      Quick Start key prefix can include numbers, lowercase letters, uppercase
+      letters, hyphens (-), and forward slash (/).
+    Default: quickstart-citrix-adc-vpx/
+    Description: >-
+      [Note] The QSS3KeyPrefix should have to end with forward slash (/).
+      S3 key prefix for the Quick Start assets. Quick Start key prefix can
+      include numbers, lowercase letters, uppercase letters, hyphens (-), and
+      forward slash (/).
+    Type: String
+
+Resources:
+  LatestAMILambdaRole:
+    Properties:
+      Path: /
+      Description: ''
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: GetVPCCIDR
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - ec2:DescribeImages
+                Resource: '*'
+                Effect: Allow
+        - PolicyName: lambdaupdate
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - lambda:UpdateFunctionCode
+                Resource: "*"
+                Effect: Allow
+    Type: AWS::IAM::Role
+  AMIInfoFunction:
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-AMIInfoFunction
+      Code:
+        S3Bucket: !Ref QSS3BucketName
+        S3Key: !Sub ${QSS3KeyPrefix}functions/packages/adc/lambda-adc.zip
+      Description: AMIInfoFunction
+      Handler: lambda_latestami.lambda_handler
+      Role: !GetAtt LatestAMILambdaRole.Arn
+      Runtime: python3.8
+      Timeout: 30
+    Type: AWS::Lambda::Function
+  AMIInfo:
+    Properties:
+      ServiceToken: !GetAtt AMIInfoFunction.Arn
+      ADCProduct: !Ref ADCProductName
+      ADCVersion: !Ref ADCProductVersion
+    Type: AWS::CloudFormation::CustomResource
+
+Outputs:
+  LatestAMILambdaRole:
+    Description: ''
+    Export:
+      Name: !Sub ${AWS::StackName}-LatestAMILambdaRole
+    Value: !Sub https://console.aws.amazon.com/iam/home#/roles/${LatestAMILambdaRole}
+  LatestADCAMI:
+    Description: Latest AMI
+    Export:
+      Name: !Sub ${AWS::StackName}-LatestADCAMI
+    Value: !GetAtt AMIInfo.LatestADCAMI

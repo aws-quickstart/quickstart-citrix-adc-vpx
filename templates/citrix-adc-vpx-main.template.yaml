@@ -1,0 +1,751 @@
+---
+AWSTemplateFormatVersion: "2010-09-09"
+Description:
+  "This template deploys a VPC, with three subnets (management, client, server) for two Availability Zones.
+  It deploys an internet gateway with a default route on the public subnets.
+  This template also creates an HA pair across Availability Zones with two instances of Citrix ADC:
+  three elastic network interfaces associated with three VPC subnets (management, client, server) on primary and three network interfaces associated
+  with three VPC subnets (management, client, server) on secondary.
+  All the resource names created by this AWS CloudFormation template will be prefixed with a tagName of the stackname.
+  **WARNING** This template creates AWS resources.
+  You will be billed for the AWS resources used if you create a stack from this template. (qs-1qtlldbck)"
+
+Metadata:
+  QuickStartDocumentation:
+    EntrypointName: "Parameters for launching into a new VPC"
+    OptionalParameters:
+      - PrimaryManagementPrivateIP
+      - PrimaryClientPrivateIP
+      - PrimaryServerPrivateIP
+      - SecondaryManagementPrivateIP
+      - SecondaryClientPrivateIP
+      - SecondaryServerPrivateIP
+      - CitrixADCImageID
+      - CitrixADCIAMRole
+      - ADMIP
+      - LicensingMode
+      - Platform
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      - Label:
+          default: VPC network configuration
+        Parameters:
+          - PrimaryAvailabilityZone
+          - SecondaryAvailabilityZone
+          - VPCCIDR
+          - RestrictedWebAppCIDR
+          - RestrictedSSHCIDR
+          - PrimaryManagementPrivateSubnetCIDR
+          - PrimaryClientPublicSubnetCIDR
+          - PrimaryServerPrivateSubnetCIDR
+          - SecondaryManagementPrivateSubnetCIDR
+          - SecondaryClientPublicSubnetCIDR
+          - SecondaryServerPrivateSubnetCIDR
+          - NATGwOnServersubnetRequired
+          - PrimaryManagementPrivateIP
+          - PrimaryClientPrivateIP
+          - PrimaryServerPrivateIP
+          - SecondaryManagementPrivateIP
+          - SecondaryClientPrivateIP
+          - SecondaryServerPrivateIP
+          - VPCTenancy
+
+      - Label:
+          default: Bastion host configuration
+        Parameters:
+          - BastionRequired
+
+      - Label:
+          default: Citrix ADC configuration
+        Parameters:
+          - ADCProductName
+          - ADCProductVersion
+          - CitrixADCImageID
+          - ADCCustomPassword
+          - KeyPairName
+          - CitrixADCInstanceType
+          - CitrixADCIAMRole
+          - ManagementEIPRequired
+          - ClientEIPRequired
+          - LBVserverRequired
+
+      - Label:
+          default: Licensing configuration
+        Parameters:
+          - PooledLicense
+          - ADMIP
+          - LicensingMode
+          - Bandwidth
+          - PooledEdition
+          - Platform
+          - VCPUEdition
+
+      - Label:
+          default: AWS Quick Start configuration
+        Parameters:
+          - QSS3BucketName
+          - QSS3BucketRegion
+          - QSS3KeyPrefix
+
+    ParameterLabels:
+      CitrixADCImageID:
+        default: Citrix ADC AMI ID
+
+      VPCCIDR:
+        default: VPC CIDR
+
+      PrimaryAvailabilityZone:
+        default: Primary Availability Zone
+      PrimaryManagementPrivateSubnetCIDR:
+        default: Primary management private subnet CIDR
+      PrimaryClientPublicSubnetCIDR:
+        default: Primary client public subnet CIDR
+      PrimaryServerPrivateSubnetCIDR:
+        default: Primary server private subnet CIDR
+
+      SecondaryAvailabilityZone:
+        default: Secondary Availability Zone
+      SecondaryManagementPrivateSubnetCIDR:
+        default: Secondary management private subnet CIDR
+      SecondaryClientPublicSubnetCIDR:
+        default: Secondary client public subnet CIDR
+      SecondaryServerPrivateSubnetCIDR:
+        default: Secondary server private subnet CIDR
+
+      PrimaryManagementPrivateIP:
+        default: Primary management private IP (NSIP)
+      PrimaryClientPrivateIP:
+        default: Primary client private IP (VIP)
+      PrimaryServerPrivateIP:
+        default: Primary server private IP (SNIP)
+      SecondaryManagementPrivateIP:
+        default: Secondary management private IP (NSIP)
+      SecondaryClientPrivateIP:
+        default: Secondary client private IP (VIP)
+      SecondaryServerPrivateIP:
+        default: Secondary server private IP (SNIP)
+
+      BastionRequired:
+        default: Create bastion host
+
+      VPCTenancy:
+        default: VPC tenancy attribute
+      RestrictedWebAppCIDR:
+        default: Restricted web app CIDR
+      RestrictedSSHCIDR:
+        default: Restricted SSH CIDR
+      KeyPairName:
+        default: Key pair name
+      CitrixADCInstanceType:
+        default: Citrix ADC instance type
+      CitrixADCIAMRole:
+        default: Citrix ADC IAM role
+      ClientEIPRequired:
+        default: Assign Elastic IP address to client VIP
+      ManagementEIPRequired:
+        default: Assign Elastic IP address to Management NSIP
+      LBVserverRequired:
+        default: Do you want the QuickStart to configure a sample LB Vserver?
+      NATGwOnServersubnetRequired:
+        default: Do you want the QuickStart to associate a NAT-Gateway to Server subnets?
+
+      ADCProductName:
+        default: Citrix ADC Product Name
+      ADCProductVersion:
+        default: Citrix ADC Product Version
+
+      ADCCustomPassword:
+        default: Citrix ADC login Password
+
+      PooledLicense:
+        default: Pooled license from ADM
+      ADMIP:
+        default: Citrix ADM IP address
+      LicensingMode:
+        default: Licensing mode
+      Platform:
+        default: Appliance platform type
+      Bandwidth:
+        default: License bandwidth in Mbps
+      PooledEdition:
+        default: Pooled edition
+      VCPUEdition:
+        default: vCPU Edition
+
+      QSS3BucketName:
+        default: Quick Start S3 bucket name
+      QSS3BucketRegion:
+        default: Quick Start S3 bucket Region
+      QSS3KeyPrefix:
+        default: Quick Start S3 key prefix
+
+Parameters:
+  CitrixADCImageID:
+    Type: String
+    Default: ""
+    AllowedPattern: ^$|^ami-[a-z0-9]{17}$
+    ConstraintDescription: CitrixADCImageID should either be empty OR valid AMI ID
+    Description: >-
+      (Optional) AMI ID of the Citrix ADC to be provisioned. If you are opting for a pooled license from ADM, enter the latest BYOL AMI ID. If opting for a PAYG subscription license, enter the AMI ID of the Citrix ADC to be provisioned. If you keep this box blank, the latest AMI associated to the above Citrix ADC Product Name and Version is provisioned by default.
+  ADCCustomPassword:
+    Type: String
+    AllowedPattern: '[.\S]{1,}'
+    ConstraintDescription: Password length must be minimum 1 character.
+      Whitespace characters not allowed.
+    Description: Strong password recommended.
+    NoEcho: true
+  VPCCIDR:
+    Description: CIDR block for the VPC. Must be a valid IP CIDR range of the form x.x.x.x/x.
+    Type: String
+    Default: 10.0.0.0/16
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  VPCTenancy:
+    Description: Allowed tenancy of instances launched into the VPC. To launch EC2 instances dedicated to a single customer, choose dedicated. See InstanceTenancy at https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html.
+    Type: String
+    Default: default
+    AllowedValues:
+      - default
+      - dedicated
+  PrimaryAvailabilityZone:
+    Description: Availability Zone for primary Citrix ADC deployment.
+    Type: AWS::EC2::AvailabilityZone::Name
+  SecondaryAvailabilityZone:
+    Description: Availability Zone for secondary Citrix ADC deployment.
+    Type: AWS::EC2::AvailabilityZone::Name
+  PrimaryManagementPrivateSubnetCIDR:
+    Description: CIDR block for the primary management private subnet located in the primary Availability Zone.
+    Type: String
+    Default: 10.0.1.0/24
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  PrimaryClientPublicSubnetCIDR:
+    Description: CIDR block for the primary client public subnet located in the primary Availability Zone.
+    Type: String
+    Default: 10.0.2.0/24
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  PrimaryServerPrivateSubnetCIDR:
+    Description: CIDR block for the primary server private subnet located in the primary Availability Zone.
+    Type: String
+    Default: 10.0.3.0/24
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  SecondaryManagementPrivateSubnetCIDR:
+    Description: CIDR block for the secondary management private subnet located in the secondary Availability Zone.
+    Type: String
+    Default: 10.0.4.0/24
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  SecondaryClientPublicSubnetCIDR:
+    Description: CIDR block for the secondary client public subnet located in the secondary Availability Zone.
+    Type: String
+    Default: 10.0.5.0/24
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  SecondaryServerPrivateSubnetCIDR:
+    Description: CIDR block for the secondary server private subnet located in the secondary Availability Zone.
+    Type: String
+    Default: 10.0.6.0/24
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  PrimaryManagementPrivateIP:
+    Default: ""
+    Type: String
+    AllowedPattern: ^$|^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x
+    Description: >-
+      (Optional) Private IP address of the primary Citrix ADC instance's management network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary management subnet CIDR.
+  PrimaryClientPrivateIP:
+    Default: ""
+    Type: String
+    AllowedPattern: ^$|^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x
+    Description: >-
+      (Optional) Private IP address of the primary Citrix ADC instance's client network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary client subnet CIDR.
+  PrimaryServerPrivateIP:
+    Default: ""
+    Type: String
+    AllowedPattern: ^$|^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x
+    Description: >-
+      (Optional) Private IP address of the primary Citrix ADC instance's server network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary server subnet CIDR.
+  SecondaryManagementPrivateIP:
+    Default: ""
+    Type: String
+    AllowedPattern: ^$|^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x
+    Description: >-
+      (Optional) Private IP address of the secondary Citrix ADC instance's management network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary management subnet CIDR.
+  SecondaryClientPrivateIP:
+    Default: ""
+    Type: String
+    AllowedPattern: ^$|^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x
+    Description: >-
+      (Optional) Private IP address of the secondary Citrix ADC instance's client network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary client subnet CIDR.
+  SecondaryServerPrivateIP:
+    Default: ""
+    Type: String
+    AllowedPattern: ^$|^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$
+    ConstraintDescription: Must be a valid IP of the form x.x.x.x
+    Description: >-
+      (Optional) Private IP address of the secondary Citrix ADC instance's server network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary server subnet CIDR.
+  QSS3BucketName:
+    AllowedPattern: "^[0-9a-zA-Z]+([0-9a-zA-Z-]*[0-9a-zA-Z])*$"
+    ConstraintDescription: >-
+      Quick Start bucket name can include numbers, lowercase letters, uppercase
+      letters, and hyphens (-). It cannot start or end with a hyphen (-).
+    Default: aws-quickstart
+    Description: >-
+      S3 bucket that you created for your copy of Quick Start assets.
+      Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters,
+      uppercase letters, and hyphens but should not start or end with a hyphen.
+    Type: String
+  QSS3BucketRegion:
+    Default: "us-east-1"
+    Description: "AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value."
+    Type: String
+  QSS3KeyPrefix:
+    AllowedPattern: "^[0-9a-zA-Z-/]*/$"
+    ConstraintDescription: >-
+      Quick Start key prefix can include numbers, lowercase letters, uppercase
+      letters, hyphens (-), and forward slash (/).
+    Default: quickstart-citrix-adc-vpx/
+    Description: >-
+      S3 key name prefix that is used to simulate a folder for your copy of Quick Start assets.
+      Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters,
+      uppercase letters, hyphens, and forward slashes.
+      See https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html.
+    Type: String
+  RestrictedWebAppCIDR:
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Description:
+      "CIDR block that is allowed to access the web apps behind ADC on TCP ports 80, 443. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses.
+       Using 0.0.0.0/0 enables all IP addresses to access your instance using SSH."
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  RestrictedSSHCIDR:
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Description:
+      "CIDR block that is allowed to access the bastion host (if present) or ADC management interface on port 22.
+      We recommend that you use a constrained CIDR range to
+      reduce the potential of inbound attacks from unknown IP addresses. Note:  Since the ADC management interface is deployed in a private subnet, initiate the SSH connection from a host with network connectivity to this private subnet, like bastion host or on-premises host with AWS Direct Connect."
+    AllowedPattern: '^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}/[0-9]{1,2}$'
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x.
+  KeyPairName:
+    Description: Name of an existing public/private key pair. If you do not have one in this AWS Region, create it before continuing.
+    Type: AWS::EC2::KeyPair::KeyName
+  CitrixADCInstanceType:
+    Default: m5.xlarge
+    ConstraintDescription: Must be a valid EC2 instance type.
+    Type: String
+    Description:
+      "EC2 instance type to use for the ADC instances. Choose an instance type that’s available in the AWS Marketplace for the Region of deployment."
+    AllowedValues:
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m4.16xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.8xlarge
+      - m5.12xlarge
+      - m5.16xlarge
+      - m5.24xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - c5.9xlarge
+      - c5.12xlarge
+      - c5.18xlarge
+      - c5.24xlarge
+      - c5n.large
+      - c5n.xlarge
+      - c5n.2xlarge
+      - c5n.4xlarge
+      - c5n.9xlarge
+      - c5n.18xlarge
+  CitrixADCIAMRole:
+    Description: "(Optional) If you want to use an existing role or create a new one, ensure that it has the required permissions, and then enter the name of the role. Otherwise, keep this box blank, and the deployment creates the required IAM role. See https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html."
+    Type: String
+    Default: ""
+
+  PooledLicense:
+    Description: >-
+      If choosing BYOL option for licensing, choose Yes. This would allow you to upload your already purchased licenses.
+      Before choosing Yes, configure Citrix ADM as a license server for the Citrix ADC pooled capacity. Refer to https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/adc-pooled-capacity/configuring-adc-pooled-capacity.html#configure-citrix-adm-as-a-license-server for details.
+    Type: String
+    Default: "No"
+    AllowedValues:
+      - "No"
+      - "Yes"
+
+  LicensingMode:
+    Description: >-
+      (Optional) By default, Citrix Web App Firewall (ADC) - 200 Mbps Version 13.0-52.24 (https://aws.amazon.com/marketplace/pp/B08286P96W) is provisioned. If you are opting for the BYOL license from ADM,
+        choose Yes for PooledLicense, enter the latest BYOL AMI ID in the CitrixADCImageID box, and choose one of the three licensing modes:
+        Pooled-Licensing, CICO-Licensing (check-in-check-out), CPU-Licensing.
+    Type: String
+    Default: ""
+    AllowedValues:
+      - ""
+      - "Pooled-Licensing"
+      - "CICO-Licensing"
+      - "CPU-Licensing"
+  ADMIP:
+    Description: "(Optional) IP address of the Citrix ADM (deployed either on-premises or as an agent in cloud) reachable from the ADC instances. If using pool licensing, enter an IP address. Otherwise, keep this box blank."
+    Type: String
+    Default: ""
+  Bandwidth:
+    Description: >-
+      (Optional) Specify only if the licensing mode is Pooled-Licensing. It allocates an initial bandwidth of the license in Mbps to be allocated after BYOL ADCs are created. If using, enter a multiple of 10 Mbps.
+    Type: Number
+    Default: 0
+  PooledEdition:
+    Description: "(Optional) License edition for pooled capacity licensing mode. This is used only if licensing mode is Pooled-Licensing."
+    Type: String
+    Default: Premium
+    AllowedValues:
+      - Premium
+  VCPUEdition:
+    Description: "(Optional) License edition for vCPU licensing mode. This is needed only if licensing mode is CPU-Licensing."
+    Type: String
+    Default: Premium
+    AllowedValues:
+      - Premium
+  Platform:
+    Description: "(Optional) Appliance platform type for vCPU licensing mode. If licensing mode is CICO-Licensing, choose VPX-200, VPX-1000, VPX-3000, or VPX-5000."
+    Type: String
+    Default: ""
+    AllowedValues:
+      - ""
+      - VPX-200
+      - VPX-1000
+      - VPX-3000
+      - VPX-5000
+  BastionRequired:
+    Type: String
+    Default: "Yes"
+    Description: Choose No if you do not want Bastion Host. This deploys a Linux bastion host in the public subnet with an Elastic IP address that gives you access to the components in the private and public subnets.
+    AllowedValues:
+      - "No"
+      - "Yes"
+  ManagementEIPRequired:
+    Type: String
+    Default: "No"
+    Description: Choose Yes to assign management Elastic IP addresses during quickstart deployment
+    AllowedValues:
+      - "No"
+      - "Yes"
+  ClientEIPRequired:
+    Type: String
+    Default: "Yes"
+    Description: Choose No to assign client Elastic IP address manually after the deployment.
+    AllowedValues:
+      - "No"
+      - "Yes"
+  ADCProductName:
+    Type: String
+    Description: ''
+    Default: Citrix ADC VPX - Customer Licensed
+    AllowedValues:
+      - Citrix ADC VPX - Customer Licensed
+      - Citrix ADC VPX Express - 20 Mbps
+      - Citrix ADC VPX Standard Edition - 10 Mbps
+      - Citrix ADC VPX Standard Edition - 200 Mbps
+      - Citrix ADC VPX Standard Edition - 1000 Mbps
+      - Citrix ADC VPX Standard Edition - 3Gbps
+      - Citrix ADC VPX Standard Edition - 5Gbps
+      - Citrix ADC VPX Premium Edition - 10 Mbps
+      - Citrix ADC VPX Premium Edition - 200 Mbps
+      - Citrix ADC VPX Premium Edition - 1000 Mbps
+      - Citrix ADC VPX Premium Edition - 3Gbps
+      - Citrix ADC VPX Premium Edition - 5Gbps
+      - Citrix ADC VPX Advanced Edition - 10 Mbps
+      - Citrix ADC VPX Advanced Edition - 200 Mbps
+      - Citrix ADC VPX Advanced Edition - 1000 Mbps
+      - Citrix ADC VPX Advanced Edition - 3Gbps
+      - Citrix ADC VPX Advanced Edition - 5Gbps
+  ADCProductVersion:
+    Type: String
+    Description: ''
+    Default: '13.0'
+    AllowedValues:
+      - '13.0'
+  LBVserverRequired:
+    Type: String
+    Default: "No"
+    Description: Choose Yes to create a LBVserver as part of quickstart
+    AllowedValues:
+      - "No"
+      - "Yes"
+  NATGwOnServersubnetRequired:
+    Type: String
+    Default: "No"
+    Description: Select Yes to associate NAT-Gateway to server subnets
+    AllowedValues:
+      - "No"
+      - "Yes"
+
+Conditions:
+  UsingDefaultBucket: !Equals [!Ref QSS3BucketName, "aws-quickstart"]
+  CreateIAMRole: !Equals [!Ref CitrixADCIAMRole, ""]
+  UseClientEIP: !Equals [!Ref ClientEIPRequired, "Yes"]
+  UseManagementEIP: !Equals [!Ref ManagementEIPRequired, "Yes"]
+  UseBastion: !Equals [!Ref BastionRequired, "Yes"]
+  NATGwOnServerSubnetCondition: !Equals [!Ref NATGwOnServersubnetRequired, "No"]
+
+Resources:
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-aws-vpc/templates/aws-vpc.template.yaml
+        - S3Region:
+            !If [UsingDefaultBucket, !Ref "AWS::Region", !Ref QSS3BucketRegion]
+          S3Bucket:
+            !If [
+              UsingDefaultBucket,
+              !Sub "${QSS3BucketName}-${AWS::Region}",
+              !Ref QSS3BucketName,
+            ]
+      Parameters:
+        NumberOfAZs: "2"
+        AvailabilityZones: !Join
+          - ","
+          - - !Ref PrimaryAvailabilityZone
+            - !Ref SecondaryAvailabilityZone
+        VPCCIDR: !Ref VPCCIDR
+        PublicSubnet1CIDR: !Ref PrimaryClientPublicSubnetCIDR
+        PublicSubnet2CIDR: !Ref SecondaryClientPublicSubnetCIDR
+        CreatePrivateSubnets: "true"
+        PrivateSubnet1BCIDR: !Ref PrimaryServerPrivateSubnetCIDR
+        PrivateSubnet2BCIDR: !Ref SecondaryServerPrivateSubnetCIDR
+        CreateAdditionalPrivateSubnets: "true"
+        PrivateSubnet1ACIDR: !Ref PrimaryManagementPrivateSubnetCIDR
+        PrivateSubnet2ACIDR: !Ref SecondaryManagementPrivateSubnetCIDR
+        VPCTenancy: !Ref VPCTenancy
+
+  PrimaryManagementSubnetRouteTabeleReassociation:
+    Condition: UseManagementEIP
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
+      RouteTableId: !GetAtt VPCStack.Outputs.PublicSubnetRouteTable
+
+  SecondaryManagementSubnetRouteTabeleReassociation:
+    Condition: UseManagementEIP
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
+      RouteTableId: !GetAtt VPCStack.Outputs.PublicSubnetRouteTable
+
+  DeleteServersideNATGWSRouteStack:
+    DependsOn: WorkLoadStack
+    Condition: NATGwOnServerSubnetCondition
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/update-serverside-route-table.template.yaml
+        - S3Region:
+            !If [UsingDefaultBucket, !Ref "AWS::Region", !Ref QSS3BucketRegion]
+          S3Bucket:
+            !If [
+              UsingDefaultBucket,
+              !Sub "${QSS3BucketName}-${AWS::Region}",
+              !Ref QSS3BucketName,
+            ]
+      Parameters:
+        PrimaryPrivateServerSubnetRouteTableID: !GetAtt VPCStack.Outputs.PrivateSubnet1BRouteTable
+        SecondaryPrivateServerSubnetRouteTableID: !GetAtt VPCStack.Outputs.PrivateSubnet2BRouteTable
+        PrimaryNATGWID: !GetAtt VPCStack.Outputs.NATGateway1ID
+        SecondaryNATGWID: !GetAtt VPCStack.Outputs.NATGateway2ID
+
+  BastionStack:
+    Condition: UseBastion
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}submodules/quickstart-linux-bastion/templates/linux-bastion.template
+        - S3Region:
+            !If [UsingDefaultBucket, !Ref "AWS::Region", !Ref QSS3BucketRegion]
+          S3Bucket:
+            !If [
+              UsingDefaultBucket,
+              !Sub "${QSS3BucketName}-${AWS::Region}",
+              !Ref QSS3BucketName,
+            ]
+      Parameters:
+        BastionAMIOS: Ubuntu-Server-20.04-LTS-HVM
+        KeyPairName: !Ref KeyPairName
+        NumBastionHosts: "1"
+        PublicSubnet1ID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
+        PublicSubnet2ID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
+        QSS3BucketName:
+          !If [
+            UsingDefaultBucket,
+            !Sub "${QSS3BucketName}-${AWS::Region}",
+            !Ref QSS3BucketName,
+          ]
+        QSS3BucketRegion:
+          !If [UsingDefaultBucket, !Ref "AWS::Region", !Ref QSS3BucketRegion]
+        QSS3KeyPrefix: !Sub ${QSS3KeyPrefix}submodules/quickstart-linux-bastion/
+        RemoteAccessCIDR: !Ref RestrictedSSHCIDR
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+
+  WorkLoadStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub
+        - https://${S3Bucket}.s3.${S3Region}.${AWS::URLSuffix}/${QSS3KeyPrefix}templates/citrix-adc-vpx-workload.template.yaml
+        - S3Region:
+            !If [UsingDefaultBucket, !Ref "AWS::Region", !Ref QSS3BucketRegion]
+          S3Bucket:
+            !If [
+              UsingDefaultBucket,
+              !Sub "${QSS3BucketName}-${AWS::Region}",
+              !Ref QSS3BucketName,
+            ]
+      Parameters:
+        VPCID: !GetAtt VPCStack.Outputs.VPCID
+        VPCTenancy: !Ref VPCTenancy
+        RestrictedSSHCIDR: !Ref RestrictedSSHCIDR
+        RestrictedWebAppCIDR: !Ref RestrictedWebAppCIDR
+        PrimaryManagementPrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
+        PrimaryClientPublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnet1ID
+        PrimaryServerPrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnet1BID
+        SecondaryManagementPrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
+        SecondaryClientPublicSubnetID: !GetAtt VPCStack.Outputs.PublicSubnet2ID
+        SecondaryServerPrivateSubnetID: !GetAtt VPCStack.Outputs.PrivateSubnet2BID
+        PrimaryManagementPrivateIP: !Ref PrimaryManagementPrivateIP
+        PrimaryClientPrivateIP: !Ref PrimaryClientPrivateIP
+        PrimaryServerPrivateIP: !Ref PrimaryServerPrivateIP
+        SecondaryManagementPrivateIP: !Ref SecondaryManagementPrivateIP
+        SecondaryClientPrivateIP: !Ref SecondaryClientPrivateIP
+        SecondaryServerPrivateIP: !Ref SecondaryServerPrivateIP
+        BastionSecurityGroupID: !If
+          - UseBastion
+          - !GetAtt BastionStack.Outputs.BastionSecurityGroupID
+          - ""
+        ADCCustomPassword: !Ref ADCCustomPassword
+        CitrixADCImageID: !Ref CitrixADCImageID
+        ADCProductName: !Ref ADCProductName
+        ADCProductVersion: !Ref ADCProductVersion
+        KeyPairName: !Ref KeyPairName
+        CitrixADCIAMRole: !Ref CitrixADCIAMRole
+        ClientEIPRequired: !Ref ClientEIPRequired
+        ManagementEIPRequired: !Ref ManagementEIPRequired
+        CitrixADCInstanceType: !Ref CitrixADCInstanceType
+        PooledLicense: !Ref PooledLicense
+        ADMIP: !Ref ADMIP
+        LicensingMode: !Ref LicensingMode
+        Bandwidth: !Ref Bandwidth
+        PooledEdition: !Ref PooledEdition
+        Platform: !Ref Platform
+        VCPUEdition: !Ref VCPUEdition
+        LBVserverRequired: !Ref LBVserverRequired
+        QSS3BucketName:
+          !If [
+            UsingDefaultBucket,
+            !Sub "${QSS3BucketName}-${AWS::Region}",
+            !Ref QSS3BucketName,
+          ]
+        QSS3BucketRegion:
+          !If [UsingDefaultBucket, !Ref "AWS::Region", !Ref QSS3BucketRegion]
+        QSS3KeyPrefix: !Ref QSS3KeyPrefix
+
+Outputs:
+  VPCID:
+    Description: VPC ID
+    Value: !GetAtt VPCStack.Outputs.VPCID
+  PrimaryManagementPrivateSubnetID:
+    Description: Primary management private subnet ID
+    Value: !GetAtt VPCStack.Outputs.PrivateSubnet1AID
+  PrimaryClientPublicSubnetID:
+    Description: Primary client public subnet ID
+    Value: !GetAtt VPCStack.Outputs.PublicSubnet1ID
+  PrimaryServerPrivateSubnetID:
+    Description: Primary server private subnet ID
+    Value: !GetAtt VPCStack.Outputs.PrivateSubnet1BID
+  SecondaryManagementPrivateSubnetID:
+    Description: Secondary management private subnet ID
+    Value: !GetAtt VPCStack.Outputs.PrivateSubnet2AID
+  SecondaryClientPublicSubnetID:
+    Description: Secondary client public subnet ID
+    Value: !GetAtt VPCStack.Outputs.PublicSubnet2ID
+  SecondaryServerPrivateSubnetID:
+    Description: Secondary server private subnet ID
+    Value: !GetAtt VPCStack.Outputs.PrivateSubnet2BID
+  ManagementSecurityGroupID:
+    Description: Security group ID for management ADC ENIs
+    Value: !GetAtt WorkLoadStack.Outputs.ManagementSecurityGroupID
+  ClientSecurityGroupID:
+    Description: Security group ID for client ADC ENIs
+    Value: !GetAtt WorkLoadStack.Outputs.ClientSecurityGroupID
+  ServerSecurityGroupID:
+    Description: Security group ID for server ADC ENIs
+    Value: !GetAtt WorkLoadStack.Outputs.ServerSecurityGroupID
+  InstanceProfileName:
+    Condition: CreateIAMRole
+    Description: Instance profile for ADCs
+    Value: !GetAtt WorkLoadStack.Outputs.InstanceProfileName
+  PrimaryADCInstanceID:
+    Description: Primary ADC instance ID
+    Value: !GetAtt WorkLoadStack.Outputs.PrimaryADCInstanceID
+  PrimaryManagementPrivateNSIP:
+    Description: Primary management private NSIP
+    Value: !GetAtt WorkLoadStack.Outputs.PrimaryManagementPrivateNSIP
+  PrimaryManagementPublicEIP:
+    Condition: UseManagementEIP
+    Description: Primary management public EIP
+    Value: !GetAtt WorkLoadStack.Outputs.PrimaryManagementPublicEIP
+  SecondaryManagementPublicEIP:
+    Condition: UseManagementEIP
+    Description: Secondary management public EIP
+    Value: !GetAtt WorkLoadStack.Outputs.SecondaryManagementPublicEIP
+  PrimaryClientPublicEIP:
+    Condition: UseClientEIP
+    Description: Primary client public EIP
+    Value: !GetAtt WorkLoadStack.Outputs.PrimaryClientPublicEIP
+  PrimaryClientPrivateVIP:
+    Description: Primary client private VIP
+    Value: !GetAtt WorkLoadStack.Outputs.PrimaryClientPrivateVIP
+  SecondaryADCInstanceID:
+    Description: Secondary ADC instance ID
+    Value: !GetAtt WorkLoadStack.Outputs.SecondaryADCInstanceID
+  SecondaryManagementPrivateNSIP:
+    Description: Secondary management private NSIP
+    Value: !GetAtt WorkLoadStack.Outputs.SecondaryManagementPrivateNSIP
+  SecondaryClientPrivateVIP:
+    Description: Secondary client private VIP
+    Value: !GetAtt WorkLoadStack.Outputs.SecondaryClientPrivateVIP
+  LinuxBastionHostEIP1:
+    Condition: UseBastion
+    Description: Elastic IP address for bastion host 1
+    Value: !GetAtt BastionStack.Outputs.EIP1
+#  LinuxBastionHostEIP2:
+#    Condition: 2BastionCondition
+#    Description: Elastic IP address for bastion host 2
+#    Value: !GetAtt BastionStack.Outputs.EIP2

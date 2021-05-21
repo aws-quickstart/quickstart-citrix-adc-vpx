@@ -1,0 +1,82 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Finds VPCCIDR from VPCID
+
+Parameters:
+  VPCID:
+    Type: AWS::EC2::VPC::Id
+    Description: ID of your existing VPC (e.g., vpc-0343606e).
+
+Resources:
+  FindVPCCIDRRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub find-vpc-cidr-${AWS::StackName}
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DescribeVpcs
+                Resource: "*"
+        - PolicyName: lambdaupdate
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - lambda:UpdateFunctionCode
+                Resource: "*"
+                Effect: Allow
+
+  FindVPCCIDRFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Find VPCCIDR from VPCID
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt FindVPCCIDRRole.Arn
+      Runtime: python3.8
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import json
+          import cfnresponse
+          import boto3
+          def handler(event, context):
+            response_data = {}
+            response_status = cfnresponse.SUCCESS
+            print(f'Received event: {json.dumps(event)}')
+            try:
+              if event['RequestType'] == 'Create':
+                VPCID = event['ResourceProperties']['VPCID']
+                client = boto3.client('ec2')
+                response = client.describe_vpcs(VpcIds=[VPCID])
+                print("VPC details : {}".format(str(response)))
+                response_data['VPCCIDR'] = response['Vpcs'][0]['CidrBlock']
+                response_status = cfnresponse.SUCCESS
+            except Exception as e:
+                print('failed to find VPCCIDR: {}'.format(str(e)))
+                response_status = cfnresponse.FAILED
+            finally:
+              cfnresponse.send(event, context, response_status, response_data)
+
+  FindVPCCIDRCustomResource:
+    Type: AWS::CloudFormation::CustomResource
+    Properties:
+      ServiceToken: !GetAtt FindVPCCIDRFunction.Arn
+      VPCID: !Ref VPCID
+
+Outputs:
+  VPCCIDR:
+    Description: VPC CIDR
+    Value: !GetAtt FindVPCCIDRCustomResource.VPCCIDR

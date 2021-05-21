@@ -1,0 +1,427 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+
+Description:
+  "This template creates the Citrix ADC with 3 ENIs (management, client, server)
+  and assoicates an EIP on management ENI and an optional EIP on client ENI
+  **WARNING** This template creates AWS resources.
+  You will be billed for the AWS resources used if you create a stack from this template."
+Parameters:
+  CitrixADCImageID:
+    Type: AWS::EC2::Image::Id
+  ADCCustomPassword:
+    Type: String
+    AllowedPattern: '[.\S]{1,}'
+    ConstraintDescription: Password length must be minimum 1 character.
+      Whitespace characters not allowed.
+    Description: Strong password recommended.
+    NoEcho: true
+  ManagementSecurityGroup:
+    Description: Security Group ID for Citrix ADC Management ENI
+    Type: String
+  ClientSecurityGroup:
+    Description: Security Group ID for Citrix ADC Client ENI
+    Type: String
+  ServerSecurityGroup:
+    Description: Security Group ID for Citrix ADC Server ENI
+    Type: String
+  LambdaSecurityGroup:
+    Description: Security Group ID for Citrix ADC Lambda ENI
+    Type: String
+  ManagementPrivateSubnetID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      Private Subnet ID of an existing subnet dedicated for Management ENI.
+      Note - The CIDR should be different from that of VPC.
+  ClientPublicSubnetID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      Public Subnet ID of an existing subnet dedicated for Client ENI.
+  ServerPrivateSubnetID:
+    Type: AWS::EC2::Subnet::Id
+    Description: >-
+      Private Subnet ID of an existing subnet dedicated for Server ENI.
+  ManagementPrivateIP:
+    Default: ""
+    Type: String
+    Description: >-
+      [OPTIONAL] Leave empty for automatic assignment. Private IP assigned to the Management ENI (last octet has to be between 5 and 254).
+  ClientPrivateIP:
+    Default: ""
+    Type: String
+    Description: >-
+      [OPTIONAL] Leave empty for automatic assignment. Private IP assigned to the Client ENI (last octet has to be between 5 and 254).
+  ServerPrivateIP:
+    Default: ""
+    Type: String
+    Description: >-
+      [OPTIONAL] Leave empty for automatic assignment. Private IP assigned to the Server ENI (last octet has to be between 5 and 254).
+  ClientENIEIP:
+    Description: Choose 'Yes' to assign EIP for Client ENI
+    Type: String
+    Default: "No"
+    AllowedValues:
+      - "No"
+      - "Yes"
+  ManagementENIEIP:
+    Description: Choose 'Yes' to assign EIP for Management ENI
+    Type: String
+    Default: "No"
+    AllowedValues:
+      - "No"
+      - "Yes"
+  ADCInstanceTagName:
+    Description: Tag Name for Citrix ADC
+    Type: String
+  KeyPairName:
+    Description: EC2 key pair name to remotely access ADCs on port 22 (SSH)
+    Type: AWS::EC2::KeyPair::KeyName
+  VPCTenancy:
+    Description: The allowed tenancy of instances launched into the VPC
+    Type: String
+    Default: default
+    AllowedValues:
+      - default
+      - dedicated
+  CitrixNodesProfile:
+    Description: Instance Profile for Citrix ADC
+    Type: String
+  CitrixADCInstanceType:
+    Default: m5.xlarge
+    ConstraintDescription: Must be a valid EC2 instance type.
+    Type: String
+    Description: Citrix ADC instance type
+    AllowedValues:
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+      - m3.large
+      - m3.xlarge
+      - m3.2xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m4.16xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.8xlarge
+      - m5.12xlarge
+      - m5.16xlarge
+      - m5.24xlarge
+      - c4.large
+      - c4.xlarge
+      - c4.2xlarge
+      - c4.4xlarge
+      - c4.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - c5.9xlarge
+      - c5.12xlarge
+      - c5.18xlarge
+      - c5.24xlarge
+      - c5n.large
+      - c5n.xlarge
+      - c5n.2xlarge
+      - c5n.4xlarge
+      - c5n.9xlarge
+      - c5n.18xlarge
+
+Conditions:
+  UseClientEIP: !Equals [!Ref ClientENIEIP, "Yes"]
+  UseManagementEIP: !Equals [!Ref ManagementENIEIP, "Yes"]
+  UseManagementPrivateIP: !Not
+    - !Equals
+      - !Ref ManagementPrivateIP
+      - ""
+  UseClientPrivateIP: !Not
+    - !Equals
+      - !Ref ClientPrivateIP
+      - ""
+  UseServerPrivateIP: !Not
+    - !Equals
+      - !Ref ServerPrivateIP
+      - ""
+
+Resources:
+  ManagementENI:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} PrimaryManagement
+      SubnetId: !Ref ManagementPrivateSubnetID
+      GroupSet:
+        - !Ref ManagementSecurityGroup
+      Description: ENI connected to Primary Management Subnet
+      PrivateIpAddress: !If
+        - UseManagementPrivateIP
+        - !Ref ManagementPrivateIP
+        - !Ref AWS::NoValue
+  ClientENI:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} PrimaryClient
+      SubnetId: !Ref ClientPublicSubnetID
+      GroupSet:
+        - !Ref ClientSecurityGroup
+      Description: ENI connected to Primary Client Subnet
+      PrivateIpAddress: !If
+        - UseClientPrivateIP
+        - !Ref ClientPrivateIP
+        - !Ref AWS::NoValue
+  ServerENI:
+    Type: AWS::EC2::NetworkInterface
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} PrimaryServer
+      SubnetId: !Ref ServerPrivateSubnetID
+      GroupSet:
+        - !Ref ServerSecurityGroup
+      Description: ENI connected to Primary Server Subnet
+      PrivateIpAddress: !If
+        - UseServerPrivateIP
+        - !Ref ServerPrivateIP
+        - !Ref AWS::NoValue
+  ManagementEIP:
+    Condition: UseManagementEIP
+    DependsOn: CitrixADCInstance
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  ManagementEIPAssociation:
+    Condition: UseManagementEIP
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      NetworkInterfaceId: !Ref ManagementENI
+      AllocationId: !GetAtt ManagementEIP.AllocationId
+  ClientEIP:
+    Condition: UseClientEIP
+    DependsOn: CitrixADCInstance
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  ClientEIPAssociation:
+    Condition: UseClientEIP
+    Type: AWS::EC2::EIPAssociation
+    Properties:
+      NetworkInterfaceId: !Ref ClientENI
+      AllocationId: !GetAtt ClientEIP.AllocationId
+  CitrixADCInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName} ${ADCInstanceTagName}
+      ImageId: !Ref CitrixADCImageID
+      KeyName: !Ref KeyPairName
+      Tenancy: !Ref VPCTenancy
+      IamInstanceProfile: !Ref CitrixNodesProfile
+      InstanceType: !Ref CitrixADCInstanceType
+      NetworkInterfaces:
+        - DeviceIndex: "0"
+          NetworkInterfaceId: !Ref ManagementENI
+        - DeviceIndex: "1"
+          NetworkInterfaceId: !Ref ClientENI
+        - DeviceIndex: "2"
+          NetworkInterfaceId: !Ref ServerENI
+  BootstrapRole:
+    Properties:
+      Path: /
+      Description: ''
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+      Policies:
+        - PolicyName: bootstrap
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Action:
+                  - ec2:CreateNetworkInterface
+                  - ec2:DeleteNetworkInterface
+                  - ec2:DescribeNetworkInterfaces
+                  - ec2:DescribeInstanceStatus
+                Resource: '*'
+                Effect: Allow
+        - PolicyName: lambdaupdate
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - lambda:UpdateFunctionCode
+                Resource: "*"
+                Effect: Allow
+    Type: AWS::IAM::Role
+  BootstrapFunction:
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${AWS::StackName}-BootstrapFunction'
+      Code:
+        ZipFile: |-
+          import boto3
+          import time
+          import cfnresponse
+          import urllib.request
+          import codecs
+          import json
+          import ssl
+
+          MAX_RETRIES = 100
+          ec2_client = boto3.client("ec2")
+
+          to_json = lambda x: codecs.encode(json.dumps(x))
+          from_json = lambda x: json.loads(x)
+
+          def r_status(nsip, instID):
+            response = ec2_client.describe_instance_status(Filters=[], InstanceIds=[instID])
+            r_status = response["InstanceStatuses"][0]["InstanceStatus"]["Details"][0]["Status"]
+            print(f"Rechability Status for {nsip}: {r_status}")
+            return r_status.strip()
+
+          def wait4boot(adc_ip, adc_instanceid):
+            retries = 1
+            while retries <= MAX_RETRIES:
+              if r_status(adc_ip, adc_instanceid) == "passed":
+                print(f"Citrix ADC VPX instances {adc_ip} reachability status passed")
+                break
+              print(f"{adc_ip} is not passed. Try no:{retries}")
+              time.sleep(5)
+              retries += 1
+            else:
+              raise Exception(f"ADC {adc_ip} did not pass the reachability status even after {MAX_RETRIES} tries")
+
+          def openurl(url, data, usr, pswd):
+            hdr = {'Content-Type': "application/json"}
+            resource = list(data.keys())[0]
+            if resource != 'login':
+              hdr['X-NITRO-USER'] = usr
+              hdr['X-NITRO-PASS'] = pswd
+            req = urllib.request.Request(url, headers=hdr, method='POST', data=to_json(data))
+            context = ssl.SSLContext()
+            context.verify_mode = ssl.CERT_NONE
+            info = dict(url=url)
+            try:
+              r = urllib.request.urlopen(req, context=context)
+              status = r.status
+              info.update(dict((k.lower(), v) for k, v in r.info().items()))
+            except urllib.error.HTTPError as e:
+              r = None
+              body = e.read()
+              info.update({'msg': str(e), 'body': body, 'status': e.code})
+              status = info['status']
+            return r, info, status
+
+          def post(nsip, usr, pswd, data):
+            resource = list(data.keys())[0]
+            print("in_post", data)
+            url = f"http://{nsip}/nitro/v1/config/{resource}"
+            print(f"URL: {url}")
+            r, info, status = openurl(url, data, usr=usr, pswd=pswd)
+            if status in [200, 201]:
+              print(f"SUCCESS: POST:{url} {data}")
+              return
+
+            result = { 'http_response_body': '' }
+            if r is not None:
+              result['http_response_body'] = codecs.decode(r.read(), 'utf-8')
+            elif 'body' in info:
+              result['http_response_body'] = codecs.decode(info['body'], 'utf-8')
+            if result['http_response_body'] != '':
+              try:
+                data = from_json(result['http_response_body'])
+                del result['http_response_body']
+              except ValueError:
+                data = {}
+              result['data'] = data
+              result['url'] = url
+              result['nitro_errorcode'] = data.get('errorcode')
+              result['nitro_message'] = data.get('message')
+              result['nitro_severity'] = data.get('severity')
+            raise Exception(result)
+
+          def change_password(nsip, usr, oldpass, newpass):
+            data = {
+              'login': {
+                'username': usr,
+                'password': oldpass,
+                'new_password': newpass,
+              }
+            }
+            post(nsip, usr, pswd=oldpass, data=data)
+
+          def handler(event, context):
+            status = cfnresponse.SUCCESS
+            print(f"event: {event}")
+            reason = None
+            try:
+              if event["RequestType"] == "Create":
+                nsip = event["ResourceProperties"]["NSIP"]
+                inst_id = event["ResourceProperties"]["InstID"]
+                new_pass = event["ResourceProperties"]["UsrPass"]
+                wait4boot(adc_ip=nsip, adc_instanceid=inst_id)
+                try:
+                  change_password(nsip=nsip, usr="nsroot", oldpass=inst_id, newpass=new_pass)
+                except Exception as e:
+                  print(f"Exception while changing password: {e}... Continuing")
+            except Exception as e:
+              reason = f"Exception: {e}"
+              print(reason)
+              status = cfnresponse.FAILED
+            finally:
+              cfnresponse.send(event, context, status, responseData={}, reason=reason)
+      Description: BootstrapFunction
+      Handler: index.handler
+      Role: !GetAtt 'BootstrapRole.Arn'
+      Runtime: python3.8
+      Timeout: 900
+      VpcConfig:
+        SecurityGroupIds:
+          - !Ref LambdaSecurityGroup
+        SubnetIds:
+          - !Ref ServerPrivateSubnetID
+    Type: AWS::Lambda::Function
+  BootstrapCustomResource:
+    Properties:
+      ServiceToken: !GetAtt BootstrapFunction.Arn
+      NSIP: !GetAtt ManagementENI.PrimaryPrivateIpAddress
+      InstID: !Ref CitrixADCInstance
+      UsrPass: !Ref ADCCustomPassword
+    Type: AWS::CloudFormation::CustomResource
+
+Outputs:
+  CitrixADCInstanceID:
+    Description: Citrix InstanceID
+    Value: !Ref CitrixADCInstance
+  ManagementPrivateNSIP:
+    Description: Management Private IP
+    Value: !GetAtt ManagementENI.PrimaryPrivateIpAddress
+  ManagementPublicEIP:
+    Condition: UseManagementEIP
+    Description: Management Public EIP
+    Value: !Ref ManagementEIP
+  ClientPublicEIP:
+    Condition: UseClientEIP
+    Description: Client Public EIP
+    Value: !Ref ClientEIP
+  ClientPrivateVIP:
+    Description: Client Private IP
+    Value: !GetAtt ClientENI.PrimaryPrivateIpAddress

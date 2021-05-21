@@ -2,4 +2,10 @@
 // Briefly describe the software. Use consistent and clear branding. 
 // Include the benefits of using the software on AWS, and provide details on usage scenarios.
 
-<Describe how the software works on AWS.>
+Citrix Application Delivery Controller (ADC) VPX is an all-in-one application delivery controller. It provides advanced Layer 4 (L4) load balancing, Layer 7 (L7) traffic management, global server load balancing, server offload, application acceleration, application security, and other essential application delivery capabilities for business needs.
+
+Deploying Citrix ADC VPX on AWS enables customers to use AWS Cloud computing capabilities. It is available as an Amazon Machine Image (AMI) via the AWS Marketplace.
+
+An HA deployment of Citrix ADC VPX consists of two instances in two different subnets or in two different AWS Availability Zones. The instances are set up as an active-passive pair in Independent Network Configuration (INC) mode to provide uninterrupted operation in any transaction. One appliance is configured as the primary node; the other, as the secondary node. The primary node accepts connections and manages servers while the secondary node monitors the primary node. If, for any reason, the primary node is unable to accept connections, the secondary node takes over seamlessly without any traffic disruption.
+
+You can customize this Quick Start by changing the configuration parameters. The Quick Start deploys a full working stack that you can inspect and use as a reference.

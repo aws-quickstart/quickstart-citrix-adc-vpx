@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.15">
-<title>Example Product Name on the AWS Cloud</title>
+<title>Citrix ADC VPX on the AWS Cloud</title>
 <style>
 
 /* Asciidoctor default stylesheet | MIT License | https://asciidoctor.org */
@@ -182,7 +182,7 @@ p a>code:hover{color:rgba(0,0,0,.9)}
   padding-top:0;
   overflow:hidden;
   background:#283e5b;
-  border-bottom: 4px solid #435c7c;
+  /* border-bottom: 4px solid #435c7c; */
   width:320px;
   height:154px;
   top:0;
@@ -411,7 +411,7 @@ span.icon>.fa{cursor:default}
 a span.icon>.fa{cursor:inherit}
 .admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
 .admonitionblock td.icon .icon-note::before{content:"\f05a";color:#19407c}
-.admonitionblock td.icon .icon-tip::before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-tip::before{content:"\f0eb";color: rgb(3, 87, 21);}
 .admonitionblock td.icon .icon-warning::before{content:"\f071";color:#bf6900}
 .admonitionblock td.icon .icon-caution::before{content:"\f06d";color:#bf3400}
 .admonitionblock td.icon .icon-important::before{content:"\f06a";color:#bf0000}
@@ -747,8 +747,43 @@ p {
   font-weight  : 300 !important;
 }
 
-#toc.toc2 #toctitle{
-  background-image: url('images/AWS-Logo.svg');
+/* image layout */
+#toc.toc2 #toctitle {
+  background-image: url("images/AWS-Logo.svg");
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-position: center;
+  width: auto;
+  height: 15%;
+}
+
+/* Left Navbar size */
+#toc.toc2 {
+  width: 17%;
+  min-width: 15em;
+}
+
+/* auto width for main page */
+body.toc2 {
+  padding-left: 22%;
+  padding-right: 2%;
+}
+
+/* hide left nav bar if page size is smaller than 767px */
+@media screen and (max-width: 767px) {
+  #toc {
+      display: none !important;
+  }
+  body.toc2 {
+    padding-left: 1%;
+    padding-right: 1%;
+    position: relative;
+  }
+
+  #content {
+    padding-left: 2%;
+    padding-right: 2%;
+  }
 }
 
 /* QS Tables */
@@ -790,7 +825,7 @@ p.footer-text a{color:#d7d8d8}
 <div id="toctitle"></div>
 <ul class="sectlevel1">
 <li><a href="#_overview">Overview</a></li>
-<li><a href="#_example_product_name_on_aws">Example Product Name on AWS</a></li>
+<li><a href="#_citrix_adc_vpx_on_aws">Citrix ADC VPX on AWS</a></li>
 <li><a href="#_aws_costs">AWS costs</a></li>
 <li><a href="#_software_licenses">Software licenses</a></li>
 <li><a href="#_architecture">Architecture</a></li>
@@ -804,16 +839,18 @@ p.footer-text a{color:#d7d8d8}
 <li><a href="#_deployment_steps">Deployment steps</a>
 <ul class="sectlevel2">
 <li><a href="#_sign_in_to_your_aws_account">Sign in to your AWS account</a></li>
+<li><a href="#_subscribe_to_the_citrix_adc_vpx_ami">Subscribe to the Citrix ADC VPX AMI</a></li>
 <li><a href="#_launch_the_quick_start">Launch the Quick Start</a></li>
 </ul>
 </li>
-<li><a href="#_test_the_deployment">Test the deployment</a></li>
-<li><a href="#_post_deployment_steps">Post-deployment steps</a></li>
-<li><a href="#_best_practices_for_using_example_product_name_on_aws">Best practices for using Example Product Name on AWS</a></li>
-<li><a href="#_security">Security</a></li>
-<li><a href="#_other_useful_information">Other useful information</a></li>
+<li><a href="#_test_the_deployment">Test the deployment</a>
+<ul class="sectlevel2">
+<li><a href="#_connect_to_citrix_ha_pair_using_bastion_host">Connect to Citrix HA pair using bastion host</a></li>
+</ul>
+</li>
+<li><a href="#_best_practices_for_using_citrix_adc_vpx_on_aws">Best practices for using Citrix ADC VPX on AWS</a></li>
 <li><a href="#_faq">FAQ</a></li>
-<li><a href="#_troubleshooting">Troubleshooting</a></li>
+<li><a href="#_additional_resources">Additional resources</a></li>
 <li><a href="#_parameter_reference">Parameter reference</a>
 <ul class="sectlevel2">
 <li><a href="#_parameters_for_launching_into_a_new_vpc">Parameters for launching into a new VPC</a></li>
@@ -830,16 +867,17 @@ p.footer-text a{color:#d7d8d8}
 <div id="content">
 <div id="preamble">
 <div class="sectionbody">
-<h2 id="_example_product_name_on_the_aws_cloud" class="discrete text-center">Example Product Name on the AWS Cloud</h2>
+<h2 id="_citrix_adc_vpx_on_the_aws_cloud" class="discrete text-center">Citrix ADC VPX on the AWS Cloud</h2>
 <h2 id="_quick_start_reference_deployment" class="discrete text-left text-center">Quick Start Reference Deployment</h2>
 <div class="imageblock text-center">
 <div class="content">
-<img src="https://aws-quickstart.s3.amazonaws.com/quickstart-documentation-base/docs/boilerplate/.images/aws-quickstart-graphic.png" alt="QS" width="80" height="80">
+<img src="https://aws-quickstart.s3.amazonaws.com/quickstart-citrix-adc-vpx/docs/boilerplate/.images/aws-quickstart-graphic.png" alt="QS" width="80" height="80">
 </div>
 </div>
 <div class="paragraph text-center">
-<p><strong>Month of launch or significant update (spelled out) Year</strong><br>
-<em>Toni Jones, AWS Quick Start team</em></p>
+<p><strong>November 2019</strong><br>
+<em>Citrix Systems, Inc.</em><br>
+<em>AWS Quick Start team</em></p>
 </div>
 <div class="admonitionblock tip text-left">
 <table>
@@ -848,14 +886,14 @@ p.footer-text a{color:#d7d8d8}
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Visit our <a href="https://github.com/aws-quickstart/quickstart-documentation-base" target="_blank" rel="noopener">GitHub repository</a> for source files and to post feedback,
+Visit our <a href="https://github.com/aws-quickstart/quickstart-citrix-adc-vpx" target="_blank" rel="noopener">GitHub repository</a> for source files and to post feedback,
 report bugs, or submit feature ideas for this Quick Start.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph text-left">
-<p>This Quick Start was created by Example Company Name, Ltd. in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
+<p>This Quick Start was created by Citrix Systems, Inc. in collaboration with Amazon Web Services (AWS). <a href="http://aws.amazon.com/quickstart/" target="_blank" rel="noopener">Quick Starts</a> are automated reference deployments that use AWS CloudFormation templates to deploy key technologies on AWS, following AWS best practices.</p>
 </div>
 </div>
 </div>
@@ -863,10 +901,10 @@ report bugs, or submit feature ideas for this Quick Start.
 <h2 id="_overview">Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide provides instructions for deploying the Example Product Name Quick Start reference architecture on the AWS Cloud.</p>
+<p>This Quick Start reference deployment guide provides step-by-step instructions for deploying the Citrix ADC VPX for high availability (HA) on the AWS Cloud.</p>
 </div>
 <div class="paragraph">
-<p>This Quick Start is for users who &lt;target audience and usage scenario&gt;</p>
+<p>This Quick Start is for users who want to build and test a proof of concept or to create a production-ready solution with a highly available deployment of Citrix ADC VPX as a front end for their web applications.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -883,10 +921,19 @@ Amazon may share user-deployment information with the AWS Partner that collabora
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_product_name_on_aws">Example Product Name on AWS</h2>
+<h2 id="_citrix_adc_vpx_on_aws">Citrix ADC VPX on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>&lt;Describe how the software works on AWS.&gt;</p>
+<p>Citrix Application Delivery Controller (ADC) VPX is an all-in-one application delivery controller. It provides advanced Layer 4 (L4) load balancing, Layer 7 (L7) traffic management, global server load balancing, server offload, application acceleration, application security, and other essential application delivery capabilities for business needs.</p>
+</div>
+<div class="paragraph">
+<p>Deploying Citrix ADC VPX on AWS enables customers to use AWS Cloud computing capabilities. It is available as an Amazon Machine Image (AMI) via the AWS Marketplace.</p>
+</div>
+<div class="paragraph">
+<p>An HA deployment of Citrix ADC VPX consists of two instances in two different subnets or in two different AWS Availability Zones. The instances are set up as an active-passive pair in Independent Network Configuration (INC) mode to provide uninterrupted operation in any transaction. One appliance is configured as the primary node; the other, as the secondary node. The primary node accepts connections and manages servers while the secondary node monitors the primary node. If, for any reason, the primary node is unable to accept connections, the secondary node takes over seamlessly without any traffic disruption.</p>
+</div>
+<div class="paragraph">
+<p>You can customize this Quick Start by changing the configuration parameters. The Quick Start deploys a full working stack that you can inspect and use as a reference.</p>
 </div>
 </div>
 </div>
@@ -910,7 +957,7 @@ see the pricing pages for each AWS service you use. Prices are subject to change
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-gettingstarted-turnonreports.html" target="_blank" rel="noopener">create AWS Cost and Usage Reports</a> to deliver billing metrics to an Amazon Simple Storage Service (Amazon S3) bucket in your account. These reports provide cost estimates based on usage throughout each month and aggregate the data at the end of the month. For more information, see <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-costusage.html" target="_blank" rel="noopener">What are AWS Cost and Usage Reports?</a>
+After you deploy the Quick Start, create <a href="https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/billing-reports-gettingstarted-turnonreports.html" target="_blank" rel="noopener">AWS Cost and Usage Reports</a> to deliver billing metrics to an Amazon Simple Storage Service (Amazon S3) bucket in your account. These reports provide cost estimates based on usage throughout each month and aggregate the data at the end of the month. For more information, see <a href="https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html" target="_blank" rel="noopener">What are AWS Cost and Usage Reports?</a>
 </td>
 </tr>
 </table>
@@ -921,19 +968,29 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <h2 id="_software_licenses">Software licenses</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>&lt;Example 1&gt;No licenses are required to deploy this Quick Start. All AWS service resources consumed during the launch of the Quick Start incur AWS service usage costs.</em></p>
+<p>You can choose an Amazon Machine Image (AMI) based on the licensing model, throughput, and bundling options.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>License model: Pay as You Go (PAYG, for the production licenses) or Bring Your Own License (BYOL, for the Customer Licensed AMI)</p>
+</li>
+<li>
+<p>Throughput: 10 Mbps, 200 Mbps, 1000 Mbps, 3 Gbps, or 5 Gbps</p>
+</li>
+<li>
+<p>Bundle: <a href="https://www.citrix.com/en-in/lp/try/citrix-networking-vpx-express.html" target="_blank" rel="noopener">Express</a>, or <a href="https://www.citrix.com/en-in/products/citrix-adc/platforms.html" target="_blank" rel="noopener">Standard, Advanced, or Premium</a></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p><em>&lt;Example 2&gt;Some configurations of the Example Product Name Quick Start involve the use of third-party software. You are responsible for obtaining a license directly from the software vendor.</em></p>
+<p>If you don’t want to purchase a license file at this time, the Quick Start requires a subscription to the <a href="https://aws.amazon.com/marketplace/pp/B00AA01BOE" target="_blank" rel="noopener">Citrix ADC VPX – Customer Licensed AMI</a>, which allows 21 days of free usage and is available from <a href="https://aws.amazon.com/marketplace/" target="_blank" rel="noopener">AWS Marketplace</a>. Additional pricing, terms, and conditions may apply.</p>
 </div>
 <div class="paragraph">
-<p><em>&lt;Example 3&gt;This Quick Start requires a license for Example Product Name. To use the Quick Start in your production environment, sign up for a license at &lt;link&gt;. When you launch the Quick Start, place the license key in an S3 bucket and specify its location.</em></p>
+<p>For instructions, see <a href="#step-2.-subscribe-to-the-citrix-adc-vpx-ami">step 2</a> in the deployment section.</p>
 </div>
 <div class="paragraph">
-<p><em>If you don’t have a license, the Quick Start deploys with a trial license. The trial license gives you &lt;n&gt; days of free usage in a non-production environment. After this time, you can upgrade to a production license by following the instructions at &lt;link&gt;.</em></p>
-</div>
-<div class="paragraph">
-<p><em>&lt;AMI information&gt;The Quick Start requires a subscription to the Amazon Machine Image (AMI) for Example Product Name, which is available from <a href="https://aws.amazon.com/marketplace/" target="_blank" rel="noopener">AWS Marketplace</a>. Additional pricing, terms, and conditions may apply. For instructions, see <a href="#step-2.-subscribe-to-the-software-ami">step 2</a> in the deployment section.</em></p>
+<p>To upgrade to a production license, see the <a href="https://www.citrix.com/buy/licensing/management.html" target="_blank" rel="noopener">Licensing</a> section on the Citrix website.</p>
 </div>
 </div>
 </div>
@@ -942,14 +999,14 @@ After you deploy the Quick Start, <a href="https://docs.aws.amazon.com/awsaccoun
 <div class="sectionbody">
 <div class="paragraph">
 <p>Deploying this Quick Start for a new virtual private cloud (VPC) with
-default parameters builds the following Example Product Name environment in the
+default parameters builds the following Citrix ADC VPX environment in the
 AWS Cloud.</p>
 </div>
 <div id="architecture1" class="imageblock">
 <div class="content">
-<img src="images/architecture_diagram.png" alt="Architecture">
+<img src="images/architecture_diagram.png" alt="Architecture" width="648" height="467">
 </div>
-<div class="title">Figure 1. Quick Start architecture for Example Product Name on AWS</div>
+<div class="title">Figure 1. Quick Start architecture for Citrix ADC VPX on AWS</div>
 </div>
 <div class="paragraph">
 <p>As shown in <a href="#architecture1">Figure 1</a>, the Quick Start sets up the following:</p>
@@ -962,6 +1019,9 @@ AWS Cloud.</p>
 <li>
 <p>A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*</p>
+</li>
+<li>
+<p>Three <strong>security groups</strong>, one for each network interface (Management, Client, Server), that act as virtual firewalls to control the traffic for their associated instances.</p>
 </li>
 <li>
 <p>In the public subnets:</p>
@@ -979,20 +1039,13 @@ Shell (SSH) access to EC2 instances in public and private subnets.*</p>
 </div>
 </li>
 <li>
-<p>In the private subnets:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>&lt;item&gt;.</p>
+<p>In the private subnets, a network interface with a private IP address for the Management (NSIP) and a network interface with a private IP address for the back-end Server subnet (SNIP).</p>
 </li>
 <li>
-<p>&lt;item&gt;.</p>
-</li>
-</ul>
-</div>
+<p>An AWS Lambda function to handle Citrix ADC VPX high availability and load balancing configuration.</p>
 </li>
 <li>
-<p>&lt;describe any additional components&gt;.</p>
+<p>An AWS Identity and Access Management (IAM) role to securely control access to AWS services and resources for your users.</p>
 </li>
 </ul>
 </div>
@@ -1013,7 +1066,7 @@ and <a href="https://aws.amazon.com/training/" target="_blank" rel="noopener">AW
 deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 </div>
 <div class="paragraph">
-<p>This Quick Start also assumes familiarity with &lt;knowledge expectations specific to this Quick Start&gt;.</p>
+<p>This Quick Start assumes familiarity with basic networking concepts, and the Citrix Application Delivery Controller (ADC VPX) product.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1033,7 +1086,7 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 <div class="sect3">
 <h4 id="_resource_quotas">Resource quotas</h4>
 <div class="paragraph">
-<p>If necessary, request <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">service quota increases</a> for the following resources. You might request quota increases to avoid exceeding the default limits for any resources that are shared across multiple deployments. The <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">Service Quotas console</a> displays your usage and quotas for some aspects of some services. For more information, see <a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">What is Service Quotas?</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html" target="_blank" rel="noopener">AWS service quotas</a>.</p>
+<p>If necessary, request <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">service quota increases</a> for the following resources. You might need to request increases if your existing deployment currently uses these resources and if this Quick Start deployment could result in exceeding the default quotas. The <a href="https://console.aws.amazon.com/servicequotas/home?region=us-east-2#!/" target="_blank" rel="noopener">Service Quotas console</a> displays your usage and quotas for some aspects of some services. For more information, see <a href="https://docs.aws.amazon.com/servicequotas/latest/userguide/intro.html" target="_blank" rel="noopener">What is Service Quotas?</a> and <a href="https://docs.aws.amazon.com/general/latest/gr/aws_service_limits.html" target="_blank" rel="noopener">AWS service quotas</a>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -1049,35 +1102,43 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VPCs</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Elastic IP addresses</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Security groups</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IAM security groups</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AWS Identity and Access Management (IAM) roles</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IAM roles</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Auto Scaling groups</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Subnets</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">6 (3/Availability Zone)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Application Load Balancers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internet gateway</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Network Load Balancers</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Route tables</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;type&gt; instances</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;n&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ADC VPX instances</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bastion host</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1/2</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NAT gateway</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2</p></td>
 </tr>
 </tbody>
 </table>
@@ -1085,17 +1146,9 @@ deploy, and operate your infrastructure and applications on the AWS Cloud.</p>
 <div class="sect3">
 <h4 id="_supported_regions">Supported Regions</h4>
 <div class="paragraph">
-<p>This Quick Start supports the following Regions:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>us-east-1, US East (N. Virginia) (EXAMPLE)</p>
-</li>
-<li>
-<p>us-east-2, US East (Ohio) (EXAMPLE)</p>
-</li>
-</ul>
+<p>Citrix ADC VPX isn’t currently supported in all AWS Regions.
+For a current list of supported Regions,
+see the <a href="https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md" target="_blank" rel="noopener">Citrix Products on AWS Marketplace</a> page on GitHub.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1124,23 +1177,27 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="paragraph">
 <p>Before launching the Quick Start, you must sign in to the AWS Management Console with IAM permissions for the resources that the templates deploy. The <em>AdministratorAccess</em> managed policy within IAM provides sufficient permissions, although your organization may choose to use a custom policy with more restrictions. For more information, see <a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_job-functions.html" target="_blank" rel="noopener">AWS managed policies for job functions</a>.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_prepare_your_aws_account">Prepare your AWS account</h4>
 <div class="paragraph">
-<p><em>Describe any setup required in the AWS account prior to template launch</em></p>
+<p>If you want to securely control access to AWS services and resources for your users, you need to create an IAM user account. The IAM role must have the permissions for the following actions:</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>ec2:DescribeInstances
+ec2:DescribeNetworkInterfaces
+ec2:DetachNetworkInterface
+ec2:AttachNetworkInterface
+ec2:StartInstances
+ec2:StopInstances
+ec2:RebootInstances
+ec2:DescribeAddresses
+ec2:AssociateAddress
+ec2:DisassociateAddress
+iam:SimulatePrincipalPolicy
+iam:GetRole
+autoscaling:*
+sns:*
+sqs:*</code></pre>
 </div>
-<div class="sect3">
-<h4 id="_prepare_your_example_company_name_ltd_account">Prepare your Example Company Name, Ltd. account</h4>
-<div class="paragraph">
-<p><em>Describe any setup required in the partner portal/account prior to template launch</em></p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_prepare_for_the_deployment">Prepare for the deployment</h4>
-<div class="paragraph">
-<p><em>Describe any preparation required to complete the product build, such as obtaining licenses or placing files in S3</em></p>
 </div>
 </div>
 <div class="sect3">
@@ -1151,15 +1208,15 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Deploy Example Product Name into a new VPC</strong>. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys Example Product Name into this new VPC.</p>
+<p><strong>Deploy Citrix ADC VPX into a new VPC</strong>. This option builds a new AWS environment consisting of the VPC, subnets, NAT gateways, security groups, bastion hosts, and other infrastructure components. It then deploys Citrix ADC VPX into this new VPC.</p>
 </li>
 <li>
-<p><strong>Deploy Example Product Name into an existing VPC</strong>. This option provisions Example Product Name in your existing AWS infrastructure.</p>
+<p><strong>Deploy Citrix ADC VPX into an existing VPC</strong>. This option provisions Citrix ADC VPX in your existing AWS infrastructure.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and Example Product Name settings, as discussed later in this guide.</p>
+<p>The Quick Start provides separate templates for these options. It also lets you configure Classless Inter-Domain Routing (CIDR) blocks, instance types, and Citrix ADC VPX settings, as discussed later in this guide.</p>
 </div>
 </div>
 </div>
@@ -1182,6 +1239,107 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 </div>
 </div>
 <div class="sect2">
+<h3 id="_subscribe_to_the_citrix_adc_vpx_ami">Subscribe to the Citrix ADC VPX AMI</h3>
+<div class="paragraph">
+<p>This Quick Start requires a subscription to the AMI for Citrix ADC VPX in AWS Marketplace.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Sign in to your AWS account.</p>
+</li>
+<li>
+<p>Open the AWS Marketplace page for the Citrix ADC (formerly NetScaler) VPX offering by choosing one of the links in the following table.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Citrix ADC VPX isn’t currently supported in all AWS Regions. Check the supported Regions of the AMI that you choose. For a current list of supported Regions for all Citrix ADC VPX AMIs, see the <a href="https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md">Citrix Products on AWS Marketplace</a> page on GitHub.
+</td>
+</tr>
+</table>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><strong>AWS Marketplace AMI</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00AA01BOE">Citrix ADC (formerly NetScaler) VPX - Customer Licensed</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00A9ZNGJI">Citrix ADC (formerly NetScaler) VPX Standard Edition- 10 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00A9ZQGWW">Citrix ADC (formerly NetScaler) VPX Standard Edition - 200 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00AA00Q7W?qid=1570466278385&amp;sr=0-12&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Standard Edition - 1000 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B07BKRFJF6?qid=1570466382327&amp;sr=0-21&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Standard Edition – 3 Gbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B07BKQYWLW?qid=1570466382327&amp;sr=0-25&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Standard Edition – 5 Gbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00A9ZLKFK">Citrix ADC (formerly NetScaler) VPX Premium - 10 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00AA07AQW?qid=1571115748323&amp;sr=0-1&amp;ref_=srh_res_product_title">Citrix ADC (formerly NetScaler) VPX Premium Edition - 200 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00A9ZWU0Y?qid=1570466278385&amp;sr=0-14&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Premium - 1000 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B07BKR4DF1?qid=1570466278385&amp;sr=0-17&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Premium – 3 Gbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B07BKQ5CLL?qid=1570466278385&amp;sr=0-18&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Premium – 5 Gbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00A9ZLKFK">Citrix ADC (formerly NetScaler) VPX Advanced - 10 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00A9ZXIF0?qid=1570465729232&amp;sr=0-9&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Advanced - 200 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B00AA03F6Q?qid=1570466278385&amp;sr=0-11&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Advanced - 1000 Mbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B07BKQZX5S?qid=1570466278385&amp;sr=0-20&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Advanced – 3 Gbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B07BKSS1DG?qid=1570466278385&amp;sr=0-20&amp;ref_=brs_res_product_title">Citrix ADC (formerly NetScaler) VPX Advanced – 5 Gbps</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://aws.amazon.com/marketplace/pp/B0796LD46X">Citrix ADC (formerly NetScaler) VPX Express - 20 Mbps</a></p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>On the AMI page, choose <strong>Continue to Subscribe.</strong></p>
+</li>
+<li>
+<p>Review the terms and conditions for software usage, and then choose <strong>Accept Terms</strong>.<br>
+A confirmation page loads, and an email confirmation is sent to the account owner. For detailed subscription instructions, see the <a href="https://aws.amazon.com/marketplace/help/200799470" target="_blank" rel="noopener">AWS Marketplace documentation</a>.</p>
+</li>
+<li>
+<p>When the subscription process is complete, exit out of AWS Marketplace without further action. <strong>Do not</strong> provision the software from AWS Marketplace—the Quick Start deploys the AMI for you.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_launch_the_quick_start">Launch the Quick Start</h3>
 <div class="admonitionblock warning">
 <table>
@@ -1190,21 +1348,18 @@ Certain Regions are available on an opt-in basis. For more information, see <a h
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-If you’re deploying Example Product Name into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances and that the subnets aren’t shared. This Quick Start doesn’t support <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html" target="_blank" rel="noopener">shared subnets</a>. These subnets require <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT gateways</a> in their route tables to allow the instances to download packages and software without exposing them to the internet. Also make sure that the domain name option in the DHCP options is configured as explained in <a href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html" target="_blank" rel="noopener">DHCP options sets</a>. You provide your VPC settings when you launch the Quick Start.
+If you’re deploying Citrix ADC VPX into an existing VPC, make sure that your VPC has two private subnets in different Availability Zones for the workload instances and that the subnets aren’t shared. This Quick Start doesn’t support <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-sharing.html" target="_blank" rel="noopener">shared subnets</a>. These subnets require <a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html" target="_blank" rel="noopener">NAT gateways</a> in their route tables to allow the instances to download packages and software without exposing them to the internet. Also make sure that the domain name option in the DHCP options is configured as explained in <a href="http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_DHCP_Options.html" target="_blank" rel="noopener">DHCP options sets</a>. You provide your VPC settings when you launch the Quick Start.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Each deployment takes about 15 minutes / 60 minutes / 1.5 hours to complete.</p>
+<p>Each deployment takes about 15 minutes to complete.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>Sign in to your AWS account, and choose one of the following options to launch the AWS CloudFormation template. For help with choosing an option, see <a href="#_deployment_options">Deployment options</a> earlier in this guide.</p>
-</li>
-</ol>
-</div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 75%;">
@@ -1212,34 +1367,25 @@ If you’re deploying Example Product Name into an existing VPC, make sure that 
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="http://qs_launch_permalink" target="_blank" rel="noopener">Deploy Example Product Name into a new VPC on AWS</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="http://qs_template_permalink" target="_blank" rel="noopener">View template</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://fwd.aws/VKJBE" target="_blank" rel="noopener">Deploy Citrix ADC VPX into a new VPC on AWS</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/aws-quickstart/quickstart-citrix-adc-vpx/blob/main/templates/citrix-adc-vpx-main.template.yaml" target="_blank" rel="noopener">View template</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="http://qs_launch_permalink" target="_blank" rel="noopener">Deploy Example Product Name into an existing VPC on AWS</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="http://qs_template_permalink" target="_blank" rel="noopener">View template</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://fwd.aws/GE9RB" target="_blank" rel="noopener">Deploy Citrix ADC VPX into an existing VPC on AWS</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://github.com/aws-quickstart/quickstart-citrix-adc-vpx/blob/main/templates/citrix-adc-vpx-workload.template.yaml" target="_blank" rel="noopener">View template</a></p></td>
 </tr>
 </tbody>
 </table>
-<div class="olist arabic">
-<ol class="arabic" start="2">
-<li>
-<p>Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for Example Product Name is built. The template is launched in the us-east-1 Region by default. For other choices, see <a href="#_supported_regions">Supported Regions</a> earlier in this guide.</p>
 </li>
-</ol>
-</div>
-<div class="olist arabic">
-<ol class="arabic" start="3">
+<li>
+<p>Check the AWS Region that’s displayed in the upper-right corner of the navigation bar, and change it if necessary. This Region is where the network infrastructure for Citrix ADC VPX is built. The template is launched in the us-east-2 Region by default. For other choices, see <a href="#_supported_regions">Supported Regions</a> earlier in this guide.</p>
+</li>
 <li>
 <p>On the <strong>Create stack</strong> page, keep the default setting for the template URL, and then choose <strong>Next</strong>.</p>
 </li>
 <li>
 <p>On the <strong>Specify stack details</strong> page, change the stack name if needed. Review the parameters for the template. Provide values for the parameters that require input. For all other parameters, review the default settings and customize them as necessary. For details on each parameter, see the <a href="#_parameter_reference">Parameter reference</a> section of this guide. When you finish reviewing and customizing the parameters, choose <strong>Next</strong>.</p>
 </li>
-</ol>
-</div>
-<div class="olist arabic">
-<ol class="arabic" start="5">
 <li>
 <p>On the <strong>Configure stack options</strong> page, you can <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-resource-tags.html" target="_blank" rel="noopener">specify tags</a> (key-value pairs) for resources in your stack and <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-add-tags.html" target="_blank" rel="noopener">set advanced options</a>. When you’re finished, choose <strong>Next</strong>.</p>
 </li>
@@ -1250,18 +1396,12 @@ If you’re deploying Example Product Name into an existing VPC, make sure that 
 <p>Choose <strong>Create stack</strong> to deploy the stack.</p>
 </li>
 <li>
-<p>Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the Example Product Name deployment is ready.</p>
+<p>Monitor the status of the stack. When the status is <strong>CREATE_COMPLETE</strong>, the Citrix ADC VPX deployment is ready.</p>
 </li>
 <li>
-<p>Use the values displayed in the <strong>Outputs</strong> tab for the stack, as shown in <a href="#cfn_outputs">Figure 2</a>, to view the created resources.</p>
+<p>To view the created resources, see the values displayed in the <strong>Outputs</strong> tab for the stack.</p>
 </li>
 </ol>
-</div>
-<div id="cfn_outputs" class="imageblock">
-<div class="content">
-<a class="image" href="images/cfn_outputs.png"><img src="images/cfn_outputs.png" alt="cfn_outputs" width="100%" height="100%"></a>
-</div>
-<div class="title">Figure 2. Example Product Name outputs after successful deployment</div>
 </div>
 </div>
 </div>
@@ -1269,36 +1409,139 @@ If you’re deploying Example Product Name into an existing VPC, make sure that 
 <div class="sect1">
 <h2 id="_test_the_deployment">Test the deployment</h2>
 <div class="sectionbody">
-
+<div class="paragraph">
+<p>We refer to the instances in this deployment as <strong>primary</strong> and <strong>secondary</strong>. Each instance has different IP addresses associated with it. When the Quick Start has been deployed successfully, traffic goes through the primary Citrix ADC VPX instance configured in Availability Zone 1. During failover conditions, when the primary instance does not respond to client requests, the secondary ADC VPX instance takes over.</p>
+</div>
+<div class="paragraph">
+<p>The Elastic IP address of the virtual IP address of the primary instance migrates to the secondary instance, which takes over as the new primary instance.</p>
+</div>
+<div class="paragraph">
+<p>In the failover process, Citrix ADC VPX does the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Checks the virtual servers that have IPSets attached to them.</p>
+</li>
+<li>
+<p>Finds the IP address that has an associated public IP address from the two IP addresses that the vserver is listening on. One that is directly attached to the vserver, and one that is attached through the IP set.</p>
+</li>
+<li>
+<p>Re-associates the public Elastic IP address to the private IP address that belongs to the new primary virtual IP address.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To test the deployment, connect to the primary instance and trigger Force Failover. Then check whether the secondary instance takes over.</p>
+</div>
+<div class="sect2">
+<h3 id="_connect_to_citrix_ha_pair_using_bastion_host">Connect to Citrix HA pair using bastion host</h3>
+<div class="paragraph">
+<p>As you cannot access the Citrix ADC VPX instance from outside the VPC, you must use a Linux bastion host to connect to it.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In the <a href="https://console.aws.amazon.com/cloudformation/" target="_blank" rel="noopener">AWS CloudFormation console</a>, choose the parent stack, and on the <strong>Outputs</strong> tab, find the value of <strong>LinuxBastionHostEIP1</strong>.</p>
+</li>
+<li>
+<p><strong>PrivateManagementPrivateNSIP</strong> and <strong>PrimaryADCInstanceID</strong> key’s value to be used in the later steps to SSH into the ADC.</p>
+<div id="output2" class="imageblock">
+<div class="content">
+<img src="images/citrix-adc-vpx-ha-pair.png" alt="Citrix ADC VPX HA pair" width="648" height="467">
+</div>
+<div class="title">Figure 2. Citrix ADC VPX HA pair deployment resources</div>
+</div>
+</li>
+<li>
+<p>Choose <strong>Services</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Compute</strong> tab, select <strong>EC2</strong>.</p>
+</li>
+<li>
+<p>Under <strong>Resources</strong>, choose <strong>Running Instances</strong>.</p>
+</li>
+<li>
+<p>On the <strong>Description</strong> tab of the primary ADC VPX instance, note the <strong>IPv4 public IP</strong> address. You will need that IP address to construct the SSH command.</p>
+<div id="output3" class="imageblock">
+<div class="content">
+<img src="images/citrix-adc-primary-instance.png" alt="Primary instance" width="648" height="467">
+</div>
+<div class="title">Figure 3. Amazon EC2 console with primary instance description</div>
+</div>
+</li>
+<li>
+<p>To store the key in your keychain, run the command <code>ssh-add -K &lt;your-key-pair&gt;.pem</code>
+On Linux, you might need to omit the -K flag.</p>
+</li>
+<li>
+<p>Log in to the bastion host using the following command, using the value for <strong>LinuxBastionHostEIP1</strong> that you noted in step 1.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>ssh -A ubuntu@&lt;LinuxBastionHostEIP1&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>From the bastion host, you can connect to the primary ADC VPX instance by using SSH.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code>ssh nsroot@&lt;Primary Management Private NSIP&gt;
+Password: &lt;Primary ADC Instance ID&gt;</code></pre>
+</div>
+</div>
+<div id="output4" class="imageblock">
+<div class="content">
+<img src="images/connect-primary.png" alt="Connect primary instance" width="648" height="467">
+</div>
+<div class="title">Figure 4. Connecting to the primary Citrix ADC VPX instance</div>
+</div>
+<div class="paragraph">
+<p>Now you are connected to the primary Citrix ADC VPX instance. To see the available commands, you can run the help command. To view the current HA configuration, you can run the show HA node command.</p>
+</div>
+</li>
+<li>
+<p>To test failover, run the <code>force ha failover</code> command. When prompted to proceed for failover, press <code>Y</code> and then press Enter to initiate the failover condition.</p>
+<div id="output5" class="imageblock">
+<div class="content">
+<img src="images/force-failover.png" alt="Force failover instance" width="648" height="467">
+</div>
+<div class="title">Figure 5. Initiating force failover test</div>
+</div>
+</li>
+<li>
+<p>Upon failover, the Master State of the primary instance changes to secondary. The status of the instances can be observed by running the <code>show HA node</code> command:</p>
+<div id="output6" class="imageblock">
+<div class="content">
+<img src="images/verify-state-change.png" alt="Primary state change" width="648" height="467">
+</div>
+<div class="title">Figure 6. Primary state changes to secondary</div>
+</div>
+</li>
+<li>
+<p>In <strong>the Amazon EC2 console</strong>, it can be observed that after failover, the Elastic IP address assigned to the primary ADC VPX instance gets allocated to the secondary instance.</p>
+<div id="output7" class="imageblock">
+<div class="content">
+<img src="images/verify-state-change-ec2.png" alt="Primary instance state change" width="648" height="467">
+</div>
+<div class="title">Figure 7. Secondary node description</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_post_deployment_steps">Post-deployment steps</h2>
-<div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
-<h2 id="_best_practices_for_using_example_product_name_on_aws">Best practices for using Example Product Name on AWS</h2>
+<h2 id="_best_practices_for_using_citrix_adc_vpx_on_aws">Best practices for using Citrix ADC VPX on AWS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Add any best practices for using the software.</em></p>
+<p>For deploying a Citrix ADC VPX instance on AWS, certain limitations and usage information must be adhered to. For details, see the <a href="https://docs.citrix.com/en-us/citrix-adc/12-1/deploying-vpx/deploy-aws/vpx-aws-limitations-usage-guidelines.html" target="_blank" rel="noopener">Usage Guidelines</a> on the Citrix website.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_security">Security</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p><em>Add any security-related information.</em></p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_other_useful_information">Other useful information</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>Add any other details that will help the customer use the software on AWS.</em></p>
+<p>For information about configuration details that apply to ADC VPX HA Pair, see Ahttps://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/high-availability-different-zones.html#how-high-availability-across-aws-availability-zones-works[DC HA Deployment across Availability Zones User’s Guide^] on Citrix website.
+<em>Add any best practices for using the software.</em></p>
 </div>
 </div>
 </div>
@@ -1309,7 +1552,7 @@ If you’re deploying Example Product Name into an existing VPC, make sure that 
 <p><strong>Q.</strong> I encountered a <strong>CREATE_FAILED</strong> error when I launched the Quick Start.</p>
 </div>
 <div class="paragraph">
-<p><strong>A.</strong> If AWS CloudFormation fails to create the stack, relaunch the template with <strong>Rollback on failure</strong> set to <strong>Disabled</strong>. This setting is under <strong>Advanced</strong> in the AWS CloudFormation console on the <strong>Configure stack options</strong> page. With this setting, the stack’s state is retained, and the instance keeps running so that you can troubleshoot the issue. (For Windows, look at the log files in <code>%ProgramFiles%\Amazon\EC2ConfigService</code> and <code>C:\cfn\log</code>.)</p>
+<p><strong>A.</strong> If AWS CloudFormation fails to create the stack, we recommend that you relaunch the template with <strong>Rollback on failure</strong> set to <strong>Disabled</strong>. (This setting is under <strong>Advanced</strong> in the AWS CloudFormation console, <strong>Options</strong> page.) With this setting, the stack’s state is retained and the instance is left running, so you can troubleshoot the issue. (For Windows, look at the log files in %ProgramFiles%\Amazon\EC2ConfigService and C:\cfn\log.)</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -1318,27 +1561,103 @@ If you’re deploying Example Product Name into an existing VPC, make sure that 
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, you continue to incur AWS charges for this stack. Delete the stack when you finish troubleshooting.
+When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, you continue to incur AWS charges for this stack. Please make sure to delete the stack when you finish troubleshooting.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>For more information, see <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html" target="_blank" rel="noopener">Troubleshooting AWS CloudFormation</a>.</p>
+<p>For additional information, see <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html" target="_blank" rel="noopener">Troubleshooting AWS CloudFormation</a> on the AWS website.</p>
 </div>
 <div class="paragraph">
-<p><strong>Q.</strong> I encountered a size-limitation error when I deployed the AWS CloudFormation templates.</p>
+<p><strong>Q.</strong> I encountered a size limitation error when I deployed the AWS CloudFormation templates.</p>
 </div>
 <div class="paragraph">
-<p><strong>A.</strong> Launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template-size limitations. For more information, see <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html" target="_blank" rel="noopener">AWS CloudFormation quotas</a>.</p>
+<p><strong>A.</strong> We recommend that you launch the Quick Start templates from the links in this guide or from another S3 bucket. If you deploy the templates from a local copy on your computer or from a location other than an S3 bucket, you might encounter template size limitations. For more information about AWS CloudFormation quotas, see the <a href="http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cloudformation-limits.html" target="_blank" rel="noopener">AWS documentation</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Q.</strong> The vserver (<code>sample_lb_vserver</code>) is showing as <strong>down</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>A.</strong> This might be because no backend servers have been deployed. We recommend configuring service and service groups and binding them with the load-balancing virtual servers (LB vservers). For more information, see <a href="https://docs.citrix.com/en-us/netscaler/12/load-balancing/load-balancing-manage-large-scale-deployment/configure-service-groups.html" target="_blank" rel="noopener">Configure service groups</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Q.</strong> While testing in my environment, the backend servers in the remote Availability Zone show as <strong>down</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>A.</strong> Try one of the following options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a static route to the remote Availability Zone server subnet by specifying the subnet IP address (SNIP) as the next hop. For more information, see <a href="https://docs.citrix.com/en-us/netscaler/12/networking/ip-routing/configuring-static-routes.html" target="_blank" rel="noopener">Configuring static routes</a>.</p>
+</li>
+<li>
+<p>Change the subnet mask so that subnets in both Availability Zones are accommodated.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To post feedback, submit feature ideas, or report bugs, use the <strong>Issues</strong> section of the <a href="https://fwd.aws/V8R57">GitHub repository</a> for this Quick Start. If you’d like to submit code, please review the <a href="https://aws-quickstart.github.io/">Quick Start Contributor’s Guide</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_troubleshooting">Troubleshooting</h2>
+<h2 id="_additional_resources">Additional resources</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>&lt;Steps for troubleshooting the deployment.&gt;</p>
+<p><strong>AWS resources</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://aws.amazon.com/getting-started/" target="_blank" rel="noopener">Getting Started Resource Center</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/general/latest/gr/" target="_blank" rel="noopener">AWS General Reference</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/general/latest/gr/glos-chap.html" target="_blank" rel="noopener">AWS Glossary</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>AWS services</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.aws.amazon.com/cloudformation/" target="_blank" rel="noopener">AWS CloudFormation</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AmazonEBS.html" target="_blank" rel="noopener">Amazon EBS</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/ec2/" target="_blank" rel="noopener">Amazon EC2</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/iam/" target="_blank" rel="noopener">IAM</a></p>
+</li>
+<li>
+<p><a href="https://docs.aws.amazon.com/vpc/" target="_blank" rel="noopener">Amazon VPC</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Citrix ADC VPX documentation</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/high-availability-different-zones.html" target="_blank" rel="noopener">Citrix HA across Availability Zones</a></p>
+</li>
+<li>
+<p><a href="https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/vpx-aws-limitations-usage-guidelines.html" target="_blank" rel="noopener">Limitations and usage guidelines</a></p>
+</li>
+<li>
+<p><a href="https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md" target="_blank" rel="noopener">Citrix ADC VPX CloudFormation templates</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -1352,8 +1671,7 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Unless you are customizing the Quick Start templates for your own deployment projects, we recommend that you keep the default settings for the parameters labeled <code>Quick Start S3 bucket name</code>, <code>Quick Start S3 bucket
-Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parameter settings automatically updates code references to point to a new Quick Start location. For more information, see the <a href="https://aws-quickstart.github.io/option1.html" target="_blank" rel="noopener">AWS Quick Start Contributor’s Guide</a>.
+Unless you are customizing the Quick Start templates for your own deployment projects, keep the default settings for the parameters labeled <strong>Quick Start S3 bucket name</strong>, <strong>Quick Start S3 bucket Region</strong>, and <strong>Quick Start S3 key prefix</strong>. Changing these parameter settings automatically updates code references to point to a new Quick Start location. For more information, see the <a href="https://aws-quickstart.github.io/option1.html" target="_blank" rel="noopener">AWS Quick Start Contributor’s Guide</a>.
 </td>
 </tr>
 </table>
@@ -1989,7 +2307,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <h2 id="_send_us_feedback">Send us feedback</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To post feedback, submit feature ideas, or report bugs, use the <strong>Issues</strong> section of the <a href="https://github.com/aws-quickstart/quickstart-documentation-base" target="_blank" rel="noopener">GitHub repository</a> for this Quick Start. To submit code, see the <a href="https://aws-quickstart.github.io/" target="_blank" rel="noopener">Quick Start Contributor’s Guide</a>.</p>
+<p>To post feedback, submit feature ideas, or report bugs, use the <strong>Issues</strong> section of the <a href="https://github.com/aws-quickstart/quickstart-citrix-adc-vpx" target="_blank" rel="noopener">GitHub repository</a> for this Quick Start. To submit code, see the <a href="https://aws-quickstart.github.io/" target="_blank" rel="noopener">Quick Start Contributor’s Guide</a>.</p>
 </div>
 </div>
 </div>
@@ -2005,7 +2323,7 @@ Region</code>, and <code>Quick Start S3 key prefix</code>. Changing these parame
 <h2 id="_github_repository">GitHub repository</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Visit our <a href="https://github.com/aws-quickstart/quickstart-documentation-base" target="_blank" rel="noopener">GitHub repository</a> to download
+<p>Visit our <a href="https://github.com/aws-quickstart/quickstart-citrix-adc-vpx" target="_blank" rel="noopener">GitHub repository</a> to download
 the templates and scripts for this Quick Start, to post your comments,
 and to share your customizations with others.</p>
 </div>
@@ -2027,7 +2345,16 @@ and to share your customizations with others.</p>
 <p class="footer-text">
 <!-- We can use document attributes: -->
 <!-- Generated with Asciidoctor v2.0.15. -->
-<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2021, Amazon Web Services, Inc. or its affiliates and Example Company Name, Ltd.. All rights reserved.
+<a href="https://aws.amazon.com/privacy/">Privacy</a> | <a href="https://aws.amazon.com/terms/">Site terms</a> | &copy; 2021, Amazon Web Services, Inc. or its affiliates and Citrix Systems, Inc.. All rights reserved.
 </p>
 </body>
 </html>
+<!--
+repo commit:
+dffb82035d6df97d413568cbcf32d50a0fc8aeb8
+
+submodule config:
+ 4b31f09b105a1aa1ea6e421e0e33b647196f4c69 docs/boilerplate (heads/main)
+ ffc7af4e59a09dbf52199a3ecf70f3805abeff48 submodules/quickstart-aws-vpc (v1.0-58-gffc7af4)
+ 4004bf08283158b0191a3ecca88394cd0411566a submodules/quickstart-linux-bastion (heads/main)
+-->

@@ -1,0 +1,105 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Removes NAT Gateway entries from serverside Route table from both the AZ
+
+Parameters:
+  PrimaryPrivateServerSubnetRouteTableID:
+    Type: String
+  SecondaryPrivateServerSubnetRouteTableID:
+    Type: String
+  PrimaryNATGWID:
+    Type: String
+  SecondaryNATGWID:
+    Type: String
+
+Resources:
+  LambdaDeleteRouteRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Sub arn:${AWS::Partition}:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Path: /
+      Policies:
+        - PolicyName: !Sub delete-route-primary-${AWS::StackName}
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DeleteRoute
+                  - ec2:CreateRoute
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:ec2:*:*:route-table/${PrimaryPrivateServerSubnetRouteTableID}"
+        - PolicyName: !Sub delete-route-secondary-${AWS::StackName}
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:DeleteRoute
+                  - ec2:CreateRoute
+                Resource:
+                  - !Sub "arn:${AWS::Partition}:ec2:*:*:route-table/${SecondaryPrivateServerSubnetRouteTableID}"
+        - PolicyName: lambdaupdate
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Action:
+                  - lambda:UpdateFunctionCode
+                Resource: "*"
+                Effect: Allow
+
+  DeleteRouteFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Description: Delete NAT GW entry from the server side routing tables in both the AZs
+      Handler: index.handler
+      MemorySize: 128
+      Role: !GetAtt LambdaDeleteRouteRole.Arn
+      Runtime: python3.8
+      Timeout: 30
+      Code:
+        ZipFile: |
+          import json
+          import cfnresponse
+          import boto3
+          def handler(event, context):
+            response_data = {}
+            response_status = cfnresponse.SUCCESS
+            print('Received event: {}'.format(json.dumps(event)))
+            try:
+              pri_server_subnet_rtb = event['ResourceProperties']['PrimaryPrivateServerSubnetRouteTableID']
+              sec_server_subnet_rtb = event['ResourceProperties']['SecondaryPrivateServerSubnetRouteTableID']
+              pri_natgw = event['ResourceProperties']['PrimaryNATGWID']
+              sec_natgw = event['ResourceProperties']['SecondaryNATGWID']
+              client = boto3.client('ec2')
+              if event['RequestType'] == 'Create':
+                response = client.delete_route(DestinationCidrBlock='0.0.0.0/0', RouteTableId=pri_server_subnet_rtb)
+                print("Delete Primary Server NATGW Response: {}".format(str(response)))
+                response = client.delete_route(DestinationCidrBlock='0.0.0.0/0', RouteTableId=sec_server_subnet_rtb)
+                print("Delete Secondary Server NATGW Response: {}".format(str(response)))
+              elif event['RequestType'] == 'Delete': # associate back the NATGW to the route table where PrivateServerSubnet is associated to
+                response = client.create_route(DestinationCidrBlock='0.0.0.0/0', NatGatewayId=pri_natgw, RouteTableId=pri_server_subnet_rtb)
+                print("Create Primary Server NATGW Response: {}".format(str(response)))
+                response = client.create_route(DestinationCidrBlock='0.0.0.0/0', NatGatewayId=sec_natgw, RouteTableId=sec_server_subnet_rtb)
+                print("Create Secondary Server NATGW Response: {}".format(str(response)))
+            except Exception as e:
+              print(f'failed to delete route: {str(e)}')
+              response_status = cfnresponse.FAILED
+            finally:
+              cfnresponse.send(event, context, response_status, response_data)
+
+  DeleteServerNATGWRoute:
+    Type: Custom::CIDR2GatewayIP
+    Properties:
+      ServiceToken: !GetAtt DeleteRouteFunction.Arn
+      PrimaryPrivateServerSubnetRouteTableID: !Ref PrimaryPrivateServerSubnetRouteTableID
+      SecondaryPrivateServerSubnetRouteTableID: !Ref SecondaryPrivateServerSubnetRouteTableID
+      PrimaryNATGWID: !Ref PrimaryNATGWID
+      SecondaryNATGWID: !Ref SecondaryNATGWID
