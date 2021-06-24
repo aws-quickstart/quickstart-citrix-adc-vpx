@@ -1,6 +1,6 @@
 
-=== Parameters for launching into a new VPC
-include::citrix-adc-vpx-main.template.adoc[]
-
 === Parameters for launching into an existing VPC
 include::citrix-adc-vpx-workload.template.adoc[]
+
+=== Parameters for launching into a new VPC
+include::citrix-adc-vpx-main.template.adoc[]
