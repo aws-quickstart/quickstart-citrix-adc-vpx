@@ -28,7 +28,7 @@ project:
     RestrictedSSHCIDR: 10.0.0.0/16
     RestrictedWebAppCIDR: 10.0.0.0/16
 tests:
-  citrix-adc-master-ap-northeast-1:
+  citrix-adc-main-ap-northeast-1:
     parameters:
       PrimaryAvailabilityZone: ap-northeast-1b
       SecondaryAvailabilityZone: ap-northeast-1c
@@ -36,7 +36,7 @@ tests:
     - ap-northeast-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-ap-northeast-2:
+  citrix-adc-main-ap-northeast-2:
     parameters:
       PrimaryAvailabilityZone: ap-northeast-2a
       SecondaryAvailabilityZone: ap-northeast-2c
@@ -44,7 +44,7 @@ tests:
     - ap-northeast-2
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-ap-south-1:
+  citrix-adc-main-ap-south-1:
     parameters:
       PrimaryAvailabilityZone: ap-south-1a
       SecondaryAvailabilityZone: ap-south-1b
@@ -52,7 +52,7 @@ tests:
     - ap-south-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-ap-southeast-1:
+  citrix-adc-main-ap-southeast-1:
     parameters:
       PrimaryAvailabilityZone: ap-southeast-1a
       SecondaryAvailabilityZone: ap-southeast-1b
@@ -60,7 +60,7 @@ tests:
     - ap-southeast-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-ap-southeast-2:
+  citrix-adc-main-ap-southeast-2:
     parameters:
       PrimaryAvailabilityZone: ap-southeast-2a
       SecondaryAvailabilityZone: ap-southeast-2b
@@ -68,7 +68,7 @@ tests:
     - ap-southeast-2
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-ca-central-1:
+  citrix-adc-main-ca-central-1:
     parameters:
       PrimaryAvailabilityZone: ca-central-1a
       SecondaryAvailabilityZone: ca-central-1b
@@ -76,7 +76,7 @@ tests:
     - ca-central-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-eu-central-1:
+  citrix-adc-main-eu-central-1:
     parameters:
       PrimaryAvailabilityZone: eu-central-1a
       SecondaryAvailabilityZone: eu-central-1b
@@ -84,7 +84,7 @@ tests:
     - eu-central-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-eu-west-1:
+  citrix-adc-main-eu-west-1:
     parameters:
       PrimaryAvailabilityZone: eu-west-1a
       SecondaryAvailabilityZone: eu-west-1b
@@ -92,7 +92,7 @@ tests:
     - eu-west-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-eu-west-2:
+  citrix-adc-main-eu-west-2:
     parameters:
       PrimaryAvailabilityZone: eu-west-2a
       SecondaryAvailabilityZone: eu-west-2b
@@ -100,7 +100,7 @@ tests:
     - eu-west-2
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-sa-east-1:
+  citrix-adc-main-sa-east-1:
     parameters:
       PrimaryAvailabilityZone: sa-east-1b
       SecondaryAvailabilityZone: sa-east-1c
@@ -108,7 +108,7 @@ tests:
     - sa-east-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-us-east-1:
+  citrix-adc-main-us-east-1:
     parameters:
       PrimaryAvailabilityZone: us-east-1a
       SecondaryAvailabilityZone: us-east-1b
@@ -116,7 +116,7 @@ tests:
     - us-east-1
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-us-east-2:
+  citrix-adc-main-us-east-2:
     parameters:
       PrimaryAvailabilityZone: us-east-2a
       SecondaryAvailabilityZone: us-east-2b
@@ -124,15 +124,16 @@ tests:
     - us-east-2
     s3_bucket: ''
     template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-us-west-1:
-    parameters:
-      PrimaryAvailabilityZone: us-west-1a
-      SecondaryAvailabilityZone: us-west-1c
-    regions:
-    - us-west-1
-    s3_bucket: ''
-    template: ./templates/citrix-adc-vpx-main.template.yaml
-  citrix-adc-master-us-west-2:
+#  Removed us-west-1 from testing
+#  citrix-adc-main-us-west-1:
+#    parameters:
+#      PrimaryAvailabilityZone: us-west-1a
+#      SecondaryAvailabilityZone: us-west-1c
+#    regions:
+#    - us-west-1
+#    s3_bucket: ''
+#    template: ./templates/citrix-adc-vpx-main.template.yaml
+  citrix-adc-main-us-west-2:
     parameters:
       PrimaryAvailabilityZone: us-west-2a
       SecondaryAvailabilityZone: us-west-2b
