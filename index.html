@@ -851,10 +851,11 @@ p.footer-text a{color:#d7d8d8}
 <li><a href="#_best_practices_for_using_citrix_adc_vpx_on_aws">Best practices for using Citrix ADC VPX on AWS</a></li>
 <li><a href="#_faq">FAQ</a></li>
 <li><a href="#_additional_resources">Additional resources</a></li>
+<li><a href="#_customer_responsibility">Customer responsibility</a></li>
 <li><a href="#_parameter_reference">Parameter reference</a>
 <ul class="sectlevel2">
-<li><a href="#_parameters_for_launching_into_an_existing_vpc">Parameters for launching into an existing VPC</a></li>
 <li><a href="#_parameters_for_launching_into_a_new_vpc">Parameters for launching into a new VPC</a></li>
+<li><a href="#_parameters_for_launching_into_an_existing_vpc">Parameters for launching into an existing VPC</a></li>
 </ul>
 </li>
 <li><a href="#_send_us_feedback">Send us feedback</a></li>
@@ -1662,6 +1663,14 @@ When you set <strong>Rollback on failure</strong> to <strong>Disabled</strong>, 
 </div>
 </div>
 <div class="sect1">
+<h2 id="_customer_responsibility">Customer responsibility</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After you successfully deploy this Quick Start, confirm that your resources and services are updated and configured — including any required patches — to meet your security and other needs. For more information, see the <a href="https://aws.amazon.com/compliance/shared-responsibility-model/" target="_blank" rel="noopener">AWS Shared Responsibility Model</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_parameter_reference">Parameter reference</h2>
 <div class="sectionbody">
 <div class="admonitionblock note">
@@ -1677,304 +1686,9 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </table>
 </div>
 <div class="sect2">
-<h3 id="_parameters_for_launching_into_an_existing_vpc">Parameters for launching into an existing VPC</h3>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. VPC network configuration</caption>
-<colgroup>
-<col style="width: 16%;">
-<col style="width: 11%;">
-<col style="width: 73%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter label (name)</th>
-<th class="tableblock halign-left valign-top">Default value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">VPC ID
-(<code>VPCID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">ID of your existing VPC (e.g., vpc-0343606e).</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bastion security group ID
-(<code>BastionSecurityGroupID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Security group ID associated with the bastion host, if present. This is used to allow access from the bastion hosts to the interfaces belonging to the security groups that will be created for the Citrix ADC HA pair. Effectively, the bastion hosts can open connections to all ADC interfaces (management, client, and server).</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Restricted SSH CIDR
-(<code>RestrictedSSHCIDR</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block that is allowed to access the bastion host (if present) or ADC management interface on port 22. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses. Note:  Since the ADC management interface is deployed in a private subnet, initiate the SSH connection from a host with network connectivity to this private subnet, like bastion host or on-premises host with AWS Direct Connect.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Restricted web app CIDR
-(<code>RestrictedWebAppCIDR</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block that is allowed to access the web apps behind ADC on TCP ports 80, 443. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses. Using 0.0.0.0/0 enables all IP addresses to access your instance using SSH.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Primary management private subnet ID
-(<code>PrimaryManagementPrivateSubnetID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for primary management network interface.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Primary client public subnet ID
-(<code>PrimaryClientPublicSubnetID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet ID of an existing subnet dedicated for primary client network interface.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Primary server private subnet ID
-(<code>PrimaryServerPrivateSubnetID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for primary server network interface.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary management private subnet ID
-(<code>SecondaryManagementPrivateSubnetID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for secondary management network interface.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary client public subnet ID
-(<code>SecondaryClientPublicSubnetID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet ID of an existing subnet dedicated for secondary client network interface.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary server private subnet ID
-(<code>SecondaryServerPrivateSubnetID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for secondary server network interface.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Primary management private IP (NSIP)
-(<code>PrimaryManagementPrivateIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the primary Citrix ADC instance&#8217;s management network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary management subnet CIDR.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Primary client private IP (VIP)
-(<code>PrimaryClientPrivateIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the primary Citrix ADC instance&#8217;s client network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary client subnet CIDR.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Primary server private IP (SNIP)
-(<code>PrimaryServerPrivateIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the primary Citrix ADC instance&#8217;s server network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary server subnet CIDR.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary management private IP (NSIP)
-(<code>SecondaryManagementPrivateIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the secondary Citrix ADC instance&#8217;s management network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary management subnet CIDR.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary client private IP (VIP)
-(<code>SecondaryClientPrivateIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the secondary Citrix ADC instance&#8217;s client network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary client subnet CIDR.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary server private IP (SNIP)
-(<code>SecondaryServerPrivateIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the secondary Citrix ADC instance&#8217;s server network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary server subnet CIDR.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">VPC tenancy attribute
-(<code>VPCTenancy</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Allowed tenancy of instances launched into the VPC. To launch EC2 instances dedicated to a single customer, choose dedicated. See InstanceTenancy at <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html" class="bare">https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html</a>.</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Citrix ADC configuration</caption>
-<colgroup>
-<col style="width: 16%;">
-<col style="width: 11%;">
-<col style="width: 73%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter label (name)</th>
-<th class="tableblock halign-left valign-top">Default value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC Product Name
-(<code>ADCProductName</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Citrix ADC VPX - Customer Licensed</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC Product Version
-(<code>ADCProductVersion</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>13.0</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC AMI ID
-(<code>CitrixADCImageID</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) AMI ID of the Citrix ADC to be provisioned. If you are opting for a pooled license from ADM, enter the latest BYOL AMI ID. If opting for a PAYG subscription license, enter the AMI ID of the Citrix ADC to be provisioned. If you keep this box blank, the latest AMI associated to the above Citrix ADC Product Name and Version is provisioned by default.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC login Password
-(<code>ADCCustomPassword</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Strong password recommended.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Key pair name
-(<code>KeyPairName</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Name of an existing public/private key pair. If you do not have one in this AWS Region, create it before continuing.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC instance type
-(<code>CitrixADCInstanceType</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>m5.xlarge</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">EC2 instance type to use for the ADC instances. Choose an instance type that’s available in the AWS Marketplace for the Region of deployment.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC IAM role
-(<code>CitrixADCIAMRole</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) If you want to use an existing role or create a new one, ensure that it has the required permissions, and then enter the name of the role. Otherwise, keep this box blank, and the deployment creates the required IAM role. See <a href="https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html" class="bare">https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html</a>.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Assign Elastic IP addresses to both Primary and Secondary Management NSIPs
-(<code>ManagementEIPRequired</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose Yes to assign management Elastic IP addresses during quickstart deployment</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Assign Elastic IP address to client VIP
-(<code>ClientEIPRequired</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Yes</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose No to assign client Elastic IP address manually after the deployment.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Do you want the QuickStart to configure a sample LB Vserver?
-(<code>LBVserverRequired</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Choose Yes to create a LBVserver as part of quickstart</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Licensing configuration</caption>
-<colgroup>
-<col style="width: 16%;">
-<col style="width: 11%;">
-<col style="width: 73%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter label (name)</th>
-<th class="tableblock halign-left valign-top">Default value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pooled license from ADM
-(<code>PooledLicense</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If choosing BYOL option for licensing, choose Yes. This would allow you to upload your already purchased licenses. Before choosing Yes, configure Citrix ADM as a license server for the Citrix ADC pooled capacity. Refer to <a href="https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/adc-pooled-capacity/configuring-adc-pooled-capacity.html#configure-citrix-adm-as-a-license-server" class="bare">https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/adc-pooled-capacity/configuring-adc-pooled-capacity.html#configure-citrix-adm-as-a-license-server</a> for details.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADM IP address
-(<code>ADMIP</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) IP address of the Citrix ADM (deployed either on-premises or as an agent in cloud) reachable from the ADC instances. If using pool licensing, enter an IP address. Otherwise, keep this box blank.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Licensing mode
-(<code>LicensingMode</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) By default, Citrix Web App Firewall (ADC) - 200 Mbps Version 13.0-52.24 (<a href="https://aws.amazon.com/marketplace/pp/B08286P96W" class="bare">https://aws.amazon.com/marketplace/pp/B08286P96W</a>) is provisioned. If you are opting for the BYOL license from ADM,
-  choose Yes for PooledLicense, enter the latest BYOL AMI ID in the CitrixADCImageID box, and choose one of the three licensing modes:
-  Pooled-Licensing, CICO-Licensing (check-in-check-out), CPU-Licensing.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">License bandwidth in Mbps
-(<code>Bandwidth</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Specify only if the licensing mode is Pooled-Licensing. It allocates an initial bandwidth of the license in Mbps to be allocated after BYOL ADCs are created. If using, enter a multiple of 10 Mbps.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Pooled edition
-(<code>PooledEdition</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Premium</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) License edition for pooled capacity licensing mode. This is used only if licensing mode is Pooled-Licensing.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Appliance platform type
-(<code>Platform</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Appliance platform type for vCPU licensing mode. If licensing mode is CICO-Licensing, choose VPX-200, VPX-1000, VPX-3000, or VPX-5000.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">vCPU Edition
-(<code>VCPUEdition</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Premium</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) License edition for vCPU licensing mode. This is needed only if licensing mode is CPU-Licensing.</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. AWS Quick Start configuration</caption>
-<colgroup>
-<col style="width: 16%;">
-<col style="width: 11%;">
-<col style="width: 73%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Parameter label (name)</th>
-<th class="tableblock halign-left valign-top">Default value</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
-(<code>QSS3BucketName</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>aws-quickstart</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens but should not start or end with a hyphen.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket region
-(<code>QSS3BucketRegion</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>us-east-1</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
-(<code>QSS3KeyPrefix</code>)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quickstart-citrix-adc-vpx/</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key name prefix that is used to simulate a folder for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes. See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a>.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
 <h3 id="_parameters_for_launching_into_a_new_vpc">Parameters for launching into a new VPC</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. VPC network configuration</caption>
+<caption class="title">Table 1. VPC network configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2105,7 +1819,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. Bastion host configuration</caption>
+<caption class="title">Table 2. Bastion host configuration</caption>
 <colgroup>
 <col style="width: 16%;">
 <col style="width: 11%;">
@@ -2124,6 +1838,301 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 (<code>BastionRequired</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>Yes</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Choose No if you do not want Bastion Host. This deploys a Linux bastion host in the public subnet with an Elastic IP address that gives you access to the components in the private and public subnets.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Citrix ADC configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC Product Name
+(<code>ADCProductName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Citrix ADC VPX - Customer Licensed</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC Product Version
+(<code>ADCProductVersion</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>13.0</code></p></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC AMI ID
+(<code>CitrixADCImageID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) AMI ID of the Citrix ADC to be provisioned. If you are opting for a pooled license from ADM, enter the latest BYOL AMI ID. If opting for a PAYG subscription license, enter the AMI ID of the Citrix ADC to be provisioned. If you keep this box blank, the latest AMI associated to the above Citrix ADC Product Name and Version is provisioned by default.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC login Password
+(<code>ADCCustomPassword</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Strong password recommended.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Key pair name
+(<code>KeyPairName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name of an existing public/private key pair. If you do not have one in this AWS Region, create it before continuing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC instance type
+(<code>CitrixADCInstanceType</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>m5.xlarge</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EC2 instance type to use for the ADC instances. Choose an instance type that’s available in the AWS Marketplace for the Region of deployment.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADC IAM role
+(<code>CitrixADCIAMRole</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) If you want to use an existing role or create a new one, ensure that it has the required permissions, and then enter the name of the role. Otherwise, keep this box blank, and the deployment creates the required IAM role. See <a href="https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html" class="bare">https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html</a>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assign Elastic IP address to Management NSIP
+(<code>ManagementEIPRequired</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose Yes to assign management Elastic IP addresses during quickstart deployment</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assign Elastic IP address to client VIP
+(<code>ClientEIPRequired</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Yes</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose No to assign client Elastic IP address manually after the deployment.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Do you want the QuickStart to configure a sample LB Vserver?
+(<code>LBVserverRequired</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Choose Yes to create a LBVserver as part of quickstart</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 4. Licensing configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pooled license from ADM
+(<code>PooledLicense</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">If choosing BYOL option for licensing, choose Yes. This would allow you to upload your already purchased licenses. Before choosing Yes, configure Citrix ADM as a license server for the Citrix ADC pooled capacity. Refer to <a href="https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/adc-pooled-capacity/configuring-adc-pooled-capacity.html#configure-citrix-adm-as-a-license-server" class="bare">https://docs.citrix.com/en-us/citrix-application-delivery-management-software/13/license-server/adc-pooled-capacity/configuring-adc-pooled-capacity.html#configure-citrix-adm-as-a-license-server</a> for details.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Citrix ADM IP address
+(<code>ADMIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) IP address of the Citrix ADM (deployed either on-premises or as an agent in cloud) reachable from the ADC instances. If using pool licensing, enter an IP address. Otherwise, keep this box blank.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Licensing mode
+(<code>LicensingMode</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) By default, Citrix Web App Firewall (ADC) - 200 Mbps Version 13.0-52.24 (<a href="https://aws.amazon.com/marketplace/pp/B08286P96W" class="bare">https://aws.amazon.com/marketplace/pp/B08286P96W</a>) is provisioned. If you are opting for the BYOL license from ADM,
+  choose Yes for PooledLicense, enter the latest BYOL AMI ID in the CitrixADCImageID box, and choose one of the three licensing modes:
+  Pooled-Licensing, CICO-Licensing (check-in-check-out), CPU-Licensing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">License bandwidth in Mbps
+(<code>Bandwidth</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Specify only if the licensing mode is Pooled-Licensing. It allocates an initial bandwidth of the license in Mbps to be allocated after BYOL ADCs are created. If using, enter a multiple of 10 Mbps.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pooled edition
+(<code>PooledEdition</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Premium</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) License edition for pooled capacity licensing mode. This is used only if licensing mode is Pooled-Licensing.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Appliance platform type
+(<code>Platform</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Appliance platform type for vCPU licensing mode. If licensing mode is CICO-Licensing, choose VPX-200, VPX-1000, VPX-3000, or VPX-5000.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">vCPU Edition
+(<code>VCPUEdition</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Premium</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) License edition for vCPU licensing mode. This is needed only if licensing mode is CPU-Licensing.</p></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 5. AWS Quick Start configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket name
+(<code>QSS3BucketName</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>aws-quickstart</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens but should not start or end with a hyphen.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket Region
+(<code>QSS3BucketRegion</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>us-east-1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 key prefix
+(<code>QSS3KeyPrefix</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>quickstart-citrix-adc-vpx/</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 key name prefix that is used to simulate a folder for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This prefix can include numbers, lowercase letters, uppercase letters, hyphens, and forward slashes. See <a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html" class="bare">https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingMetadata.html</a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_parameters_for_launching_into_an_existing_vpc">Parameters for launching into an existing VPC</h3>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 6. VPC network configuration</caption>
+<colgroup>
+<col style="width: 16%;">
+<col style="width: 11%;">
+<col style="width: 73%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter label (name)</th>
+<th class="tableblock halign-left valign-top">Default value</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VPC ID
+(<code>VPCID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ID of your existing VPC (e.g., vpc-0343606e).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bastion security group ID
+(<code>BastionSecurityGroupID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Security group ID associated with the bastion host, if present. This is used to allow access from the bastion hosts to the interfaces belonging to the security groups that will be created for the Citrix ADC HA pair. Effectively, the bastion hosts can open connections to all ADC interfaces (management, client, and server).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Restricted SSH CIDR
+(<code>RestrictedSSHCIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block that is allowed to access the bastion host (if present) or ADC management interface on port 22. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses. Note:  Since the ADC management interface is deployed in a private subnet, initiate the SSH connection from a host with network connectivity to this private subnet, like bastion host or on-premises host with AWS Direct Connect.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Restricted web app CIDR
+(<code>RestrictedWebAppCIDR</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CIDR block that is allowed to access the web apps behind ADC on TCP ports 80, 443. We recommend that you use a constrained CIDR range to reduce the potential of inbound attacks from unknown IP addresses. Using 0.0.0.0/0 enables all IP addresses to access your instance using SSH.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primary management private subnet ID
+(<code>PrimaryManagementPrivateSubnetID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for primary management network interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primary client public subnet ID
+(<code>PrimaryClientPublicSubnetID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet ID of an existing subnet dedicated for primary client network interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primary server private subnet ID
+(<code>PrimaryServerPrivateSubnetID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for primary server network interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary management private subnet ID
+(<code>SecondaryManagementPrivateSubnetID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for secondary management network interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary client public subnet ID
+(<code>SecondaryClientPublicSubnetID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Public subnet ID of an existing subnet dedicated for secondary client network interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary server private subnet ID
+(<code>SecondaryServerPrivateSubnetID</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Requires input</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Private subnet ID of an existing subnet dedicated for secondary server network interface.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primary management private IP (NSIP)
+(<code>PrimaryManagementPrivateIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the primary Citrix ADC instance&#8217;s management network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary management subnet CIDR.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primary client private IP (VIP)
+(<code>PrimaryClientPrivateIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the primary Citrix ADC instance&#8217;s client network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary client subnet CIDR.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Primary server private IP (SNIP)
+(<code>PrimaryServerPrivateIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the primary Citrix ADC instance&#8217;s server network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the primary server subnet CIDR.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary management private IP (NSIP)
+(<code>SecondaryManagementPrivateIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the secondary Citrix ADC instance&#8217;s management network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary management subnet CIDR.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary client private IP (VIP)
+(<code>SecondaryClientPrivateIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the secondary Citrix ADC instance&#8217;s client network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary client subnet CIDR.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Secondary server private IP (SNIP)
+(<code>SecondaryServerPrivateIP</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code><strong><em>Blank string</em></strong></code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) Private IP address of the secondary Citrix ADC instance&#8217;s server network interface. If you want to provide your own IP address, enter a number between 5 and 254 for the last octet. Otherwise, keep this box blank, and an IP address is automatically assigned from the secondary server subnet CIDR.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VPC tenancy attribute
+(<code>VPCTenancy</code>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allowed tenancy of instances launched into the VPC. To launch EC2 instances dedicated to a single customer, choose dedicated. See InstanceTenancy at <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html" class="bare">https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ec2-vpc.html</a>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -2185,7 +2194,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">(Optional) If you want to use an existing role or create a new one, ensure that it has the required permissions, and then enter the name of the role. Otherwise, keep this box blank, and the deployment creates the required IAM role. See <a href="https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html" class="bare">https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/prerequisites.html</a>.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Assign Elastic IP address to Management NSIP
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assign Elastic IP addresses to both Primary and Secondary Management NSIPs
 (<code>ManagementEIPRequired</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>No</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Choose Yes to assign management Elastic IP addresses during quickstart deployment</p></td>
@@ -2287,7 +2296,7 @@ Unless you are customizing the Quick Start templates for your own deployment pro
 <td class="tableblock halign-left valign-top"><p class="tableblock">S3 bucket that you created for your copy of Quick Start assets. Use this if you decide to customize the Quick Start. This bucket name can include numbers, lowercase letters, uppercase letters, and hyphens but should not start or end with a hyphen.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket Region
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick Start S3 bucket region
 (<code>QSS3BucketRegion</code>)</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>us-east-1</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">AWS Region where the Quick Start S3 bucket (QSS3BucketName) is hosted. When using your own bucket, you must specify this value.</p></td>
@@ -2351,10 +2360,10 @@ and to share your customizations with others.</p>
 </html>
 <!--
 repo commit:
-e157739409f561b9c13cf01691c6a1148a3cb9eb
+1315e7dd491b615fbe6e49fab94c46ccb0756bd0
 
 submodule config:
-+41862fa5fb846466fba46a36faf67e2a77c2bfc5 docs/boilerplate (heads/main)
++81ea0b675a571b662377f9de556a26cce8dad05f docs/boilerplate (heads/main)
  ffc7af4e59a09dbf52199a3ecf70f3805abeff48 submodules/quickstart-aws-vpc (v1.0-58-gffc7af4)
- 297feeb5aefd6d4826367ea7568a55de9e3c70c0 submodules/quickstart-linux-bastion (heads/main)
+ 1633e9bfee39d639916cbd652f6875019ee6fed8 submodules/quickstart-linux-bastion (heads/main)
 -->
