@@ -12,17 +12,16 @@ image::../docs/deployment_guide/images/architecture_diagram.png[Architecture]
 As shown in <<architecture1>>, this Partner Solution sets up the following:
 
 * A highly available architecture that spans two Availability Zones.*
-* A virtual private cloud (VPC) configured with public and private subnets, according to AWS
+* A VPC configured with public and private subnets, according to AWS
 best practices, to provide you with your own virtual network on AWS.*
+* Three *security groups*, one for each network interface (Management, Client, Server), that act as virtual firewalls to control the traffic for their associated instances.
 * In the public subnets:
 ** Managed network address translation (NAT) gateways to allow outbound
 internet access for resources in the private subnets.*
 ** A Linux bastion host in an Auto Scaling group to allow inbound Secure
-Shell (SSH) access to Amazon Elastic Compute Cloud (Amazon EC2) instances in public and private subnets.*
-* In the private subnets:
-** <item>.
-** <item>.
-// Add bullet points for any additional components that are included in the deployment. Ensure that the additional components are shown in the architecture diagram. End each bullet with a period.
-* <describe any additional components>.
+Shell (SSH) access to EC2 instances in public and private subnets.*
+* In the private subnets, a network interface with a private IP address for the Management (NSIP) and a network interface with a private IP address for the back-end Server subnet (SNIP).
+* An AWS Lambda function to handle Citrix ADC VPX high availability and load balancing configuration.
+* An AWS Identity and Access Management (IAM) role to securely control access to AWS services and resources for your users.
 
 [.small]#* The template that deploys this Partner Solution into an existing VPC skips the components marked by asterisks and prompts you for your existing VPC configuration.#

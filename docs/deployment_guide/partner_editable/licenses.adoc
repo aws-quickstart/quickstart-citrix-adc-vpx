@@ -1,3 +1,17 @@
 // Include details about any licenses and how to sign up. Provide links as appropriate.
 
+You can choose an Amazon Machine Image (AMI) based on the licensing model, throughput, and bundling options.
+
+* License model: Pay as You Go (PAYG, for the production licenses) or Bring Your Own License (BYOL, for the Customer Licensed AMI)
+* Throughput: 10 Mbps, 200 Mbps, 1000 Mbps, 3 Gbps, or 5 Gbps
+* Bundle: https://www.citrix.com/en-in/lp/try/citrix-networking-vpx-express.html[Express^], or https://www.citrix.com/en-in/products/citrix-adc/platforms.html[Standard, Advanced, or Premium^]
+
+If you don’t want to purchase a license file at this time, the Partner Solution requires a subscription to the https://aws.amazon.com/marketplace/pp/B00AA01BOE[Citrix ADC VPX – Customer Licensed AMI^], which allows 21 days of free usage and is available from https://aws.amazon.com/marketplace/[AWS Marketplace^]. Additional pricing, terms, and conditions may apply.
+
+//TODO Fix this link
+For instructions, see link:#_subscribe_to_the_citrix_adc_vpx_ami[Subscribe to the Citrix ADC VPX AMI] in the predeployment section.
+
+To upgrade to a production license, see the https://www.citrix.com/buy/licensing/management.html[Licensing^] section on the Citrix website.
+
+
 There is no cost to use this Partner Solution, but you will be billed for any AWS services or resources that this Partner Solution deploys. For more information, refer to the https://fwd.aws/rA69w?[AWS Partner Solution General Information Guide^].

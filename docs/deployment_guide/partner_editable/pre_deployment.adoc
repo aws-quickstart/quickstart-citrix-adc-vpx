@@ -1,3 +1,40 @@
 //Include any predeployment steps here, such as signing up for a Marketplace AMI or making any changes to a partner account. If there are no predeployment steps, leave this file empty.
 
 == Predeployment steps
+
+=== Subscribe to the {partner-product-short-name} AMI
+
+This Partner Solution requires a subscription to the AMI for {partner-product-short-name} in AWS Marketplace.
+
+. Sign in to your AWS account.
+. Open the AWS Marketplace page for the Citrix ADC (formerly NetScaler) VPX offering by choosing one of the links in the following table.
++
+TIP: Citrix ADC VPX isn’t currently supported in all AWS Regions. Check the supported Regions of the AMI that you choose. For a current list of supported Regions for all Citrix ADC VPX AMIs, see the https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md[Citrix Products on AWS Marketplace] page on GitHub.
++
+|===
+|*AWS Marketplace AMI*
+
+// Space needed to maintain table headers
+|https://aws.amazon.com/marketplace/pp/B00AA01BOE[Citrix ADC (formerly NetScaler) VPX - Customer Licensed]
+|https://aws.amazon.com/marketplace/pp/B00A9ZNGJI[Citrix ADC (formerly NetScaler) VPX Standard Edition- 10 Mbps]
+|https://aws.amazon.com/marketplace/pp/B00A9ZQGWW[Citrix ADC (formerly NetScaler) VPX Standard Edition - 200 Mbps]
+|https://aws.amazon.com/marketplace/pp/B00AA00Q7W?qid=1570466278385&sr=0-12&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Standard Edition - 1000 Mbps]
+|https://aws.amazon.com/marketplace/pp/B07BKRFJF6?qid=1570466382327&sr=0-21&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Standard Edition – 3 Gbps]
+|https://aws.amazon.com/marketplace/pp/B07BKQYWLW?qid=1570466382327&sr=0-25&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Standard Edition – 5 Gbps]
+|https://aws.amazon.com/marketplace/pp/B00A9ZLKFK[Citrix ADC (formerly NetScaler) VPX Premium - 10 Mbps]
+|https://aws.amazon.com/marketplace/pp/B00AA07AQW?qid=1571115748323&sr=0-1&ref_=srh_res_product_title[Citrix ADC (formerly NetScaler) VPX Premium Edition - 200 Mbps]
+|https://aws.amazon.com/marketplace/pp/B00A9ZWU0Y?qid=1570466278385&sr=0-14&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Premium - 1000 Mbps]
+|https://aws.amazon.com/marketplace/pp/B07BKR4DF1?qid=1570466278385&sr=0-17&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Premium – 3 Gbps]
+|https://aws.amazon.com/marketplace/pp/B07BKQ5CLL?qid=1570466278385&sr=0-18&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Premium – 5 Gbps]
+|https://aws.amazon.com/marketplace/pp/B00A9ZLKFK[Citrix ADC (formerly NetScaler) VPX Advanced - 10 Mbps]
+|https://aws.amazon.com/marketplace/pp/B00A9ZXIF0?qid=1570465729232&sr=0-9&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Advanced - 200 Mbps]
+|https://aws.amazon.com/marketplace/pp/B00AA03F6Q?qid=1570466278385&sr=0-11&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Advanced - 1000 Mbps]
+|https://aws.amazon.com/marketplace/pp/B07BKQZX5S?qid=1570466278385&sr=0-20&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Advanced – 3 Gbps]
+|https://aws.amazon.com/marketplace/pp/B07BKSS1DG?qid=1570466278385&sr=0-20&ref_=brs_res_product_title[Citrix ADC (formerly NetScaler) VPX Advanced – 5 Gbps]
+|https://aws.amazon.com/marketplace/pp/B0796LD46X[Citrix ADC (formerly NetScaler) VPX Express - 20 Mbps]
+|===
+. On the AMI page, choose *Continue to Subscribe.*
+. Review the terms and conditions for software usage, and then choose *Accept Terms*. +
+  A confirmation page loads, and an email confirmation is sent to the account owner. For detailed subscription instructions, see the https://aws.amazon.com/marketplace/help/200799470[AWS Marketplace documentation^].
+
+. When the subscription process is complete, exit out of AWS Marketplace without further action. *Do not* provision the software from AWS Marketplace—the Partner Solution deploys the AMI for you.

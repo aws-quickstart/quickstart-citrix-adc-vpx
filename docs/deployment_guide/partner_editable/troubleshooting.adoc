@@ -2,5 +2,25 @@
 
 For troubleshooting common Partner Solution issues, refer to the https://fwd.aws/rA69w?[AWS Partner Solution General Information Guide^] and https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/troubleshooting.html[Troubleshooting CloudFormation^].
 
-// == Resources
+=== FAQ
+
+*Q.* The vserver (`sample_lb_vserver`) is showing as *down*.
+
+*A.* This might be because no backend servers have been deployed. We recommend configuring service and service groups and binding them with the load-balancing virtual servers (LB vservers). For more information, see https://docs.citrix.com/en-us/netscaler/12/load-balancing/load-balancing-manage-large-scale-deployment/configure-service-groups.html[Configure service groups^].
+
+*Q.* While testing in my environment, the backend servers in the remote Availability Zone show as *down*.
+
+*A.* Try one of the following options:
+
+* Add a static route to the remote Availability Zone server subnet by specifying the subnet IP address (SNIP) as the next hop. For more information, see https://docs.citrix.com/en-us/netscaler/12/networking/ip-routing/configuring-static-routes.html[Configuring static routes^].
+* Change the subnet mask so that subnets in both Availability Zones are accommodated.
+
+
+== Resources
+
+*Citrix ADC VPX documentation*
+
+* https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/high-availability-different-zones.html[Citrix HA across Availability Zones^]
+* https://docs.citrix.com/en-us/citrix-adc/13/deploying-vpx/deploy-aws/vpx-aws-limitations-usage-guidelines.html[Limitations and usage guidelines^]
+* https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md[Citrix ADC VPX CloudFormation templates^]
 // Uncomment section and add links to any external resources that are specified by the partner.
