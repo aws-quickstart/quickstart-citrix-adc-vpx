@@ -1,3 +1,0 @@
-Citrix ADC VPX isn’t currently supported in all AWS Regions.
-For a current list of supported Regions,
-see the https://github.com/citrix/citrix-adc-aws-cloudformation/blob/master/templates/README.md[Citrix Products on AWS Marketplace^] page on GitHub.
